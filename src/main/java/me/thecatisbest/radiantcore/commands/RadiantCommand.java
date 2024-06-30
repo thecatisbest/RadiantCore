@@ -6,7 +6,6 @@ import me.thecatisbest.radiantcore.utilis.Utilis;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -55,6 +54,8 @@ public class RadiantCommand implements TabExecutor {
         Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
         StringBuilder pluginList = new StringBuilder();
 
+        pluginList.append("\n");
+
         for (int i = 0; i < plugins.length; i++) {
             Plugin plugin = plugins[i];
             String name = plugin.getDescription().getName();
@@ -70,12 +71,7 @@ public class RadiantCommand implements TabExecutor {
                     .append("\n");
         }
 
-        if (sender instanceof ConsoleCommandSender) {
-            // Remove color codes for console output
-            return ChatColor.stripColor(pluginList.toString());
-        } else {
-            return pluginList.toString();
-        }
+        return pluginList.toString();
     }
 
     @Override
