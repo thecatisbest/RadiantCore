@@ -14,13 +14,13 @@ public class GeneralConfig {
 
     public static String COMMANDS = "say hi;say I'm %player%";
     public static Boolean SWAP = false;
-    public static String MAGIC_MUSHROOM_SOUP_NAME = "&6Magic Mushroom Milk";
-    public static List<String> MAGIC_MUSHROOM_SOUP_LORE = Arrays.asList("&dFlight Soup", "&eCan fly 30 seconds");
-    public static Integer MAGIC_MUSHROOM_SOUP_DURATION = 30;
+    public static String MAGIC_MUSHROOM_SOUP_NAME = "&6魔菇湯";
+    public static List<String> MAGIC_MUSHROOM_SOUP_LORE = Arrays.asList("&f聽說喝了可以有&b飛上天&f的感覺, 真的假的?", "&f可以讓玩家飛行&610 分鐘&f, 離開伺服器將暫停效果", "", "&e點擊右鍵使用！");
+    public static Integer MAGIC_MUSHROOM_SOUP_DURATION = 600;
     public static String  MAGIC_MUSHROOM_SOUP_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjI2ODMyODZhOTEyZWVkYzIyNDk3NGIyZDRhZmI3ZmE1NDViMTNhZTYxZDE5ZjNjZGY5OTBlNTFhNTA1YWVmMSJ9fX0=";
-    public static String SUPER_MAGIC_MUSHROOM_SOUP_NAME = "&6Mystical Mushroom Soup";
-    public static List<String> SUPER_MAGIC_MUSHROOM_SOUP_LORE = Arrays.asList("&dFlight Soup", "&eCan fly 60 seconds");
-    public static Integer SUPER_MAGIC_MUSHROOM_SOUP_DURATION = 60;
+    public static String SUPER_MAGIC_MUSHROOM_SOUP_NAME = "&6超級魔菇湯";
+    public static List<String> SUPER_MAGIC_MUSHROOM_SOUP_LORE = Arrays.asList("&f聽說喝了可以有&b飛上天&f的感覺, 效果比&6魔菇湯&f還要好!", "&f可以讓玩家飛行&660 分鐘&f, 離開伺服器將暫停效果", "", "&e點擊右鍵使用！");
+    public static Integer SUPER_MAGIC_MUSHROOM_SOUP_DURATION = 3600;
     public static String SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFlNWQwYzIzZWMxYTFmODEzYzBjNjNmMTEyZTU1YjdiMWM4N2ZlY2QzMjY5YzBmZGJjZTk2ZDAzYjU1OGMwOCJ9fX0=";
 
     public static void loadAndUpdate(RadiantCore plugin) {
@@ -36,22 +36,22 @@ public class GeneralConfig {
         COMMANDS = root.getString("commands", "say hi;say I'm %player%");
         SWAP = root.getBoolean("cancel_swap", false);
         // --------------------------------------------------------------
-        MAGIC_MUSHROOM_SOUP_NAME = root.getString("Magic-Mushroom-Soup.name", "&6Magic Mushroom Milk");
+        MAGIC_MUSHROOM_SOUP_NAME = root.getString("Magic-Mushroom-Soup.name", "&6魔菇湯");
         if (root.contains("Magic-Mushroom-Soup.lore")) {
             MAGIC_MUSHROOM_SOUP_LORE = root.getStringList("Magic-Mushroom-Soup.lore");
         } else {
-            MAGIC_MUSHROOM_SOUP_LORE = Arrays.asList("&dFlight Soup", "&eCan fly 30 seconds");
+            MAGIC_MUSHROOM_SOUP_LORE = Arrays.asList("&f聽說喝了可以有&b飛上天&f的感覺, 真的假的?", "&f可以讓玩家飛行&610 分鐘&f, 離開伺服器將暫停效果", "", "&e點擊右鍵使用！");
         }
-        MAGIC_MUSHROOM_SOUP_DURATION = root.getInt("Magic-Mushroom-Soup.duration", 30);
+        MAGIC_MUSHROOM_SOUP_DURATION = root.getInt("Magic-Mushroom-Soup.duration", 600);
         MAGIC_MUSHROOM_SOUP_TEXTURE = root.getString("Magic-Mushroom-Soup.texture", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmZiMjkwYTEzZGY4ODI2N2VhNWY1ZmNmNzk2YjYxNTdmZjY0Y2NlZTVjZDM5ZDQ2OTcyNDU5MWJhYmVlZDFmNiJ9fX0=");
         // --------------------------------------------------------------
-        SUPER_MAGIC_MUSHROOM_SOUP_NAME = root.getString("Super-Magic-Mushroom-Soup.name", "&6Mystical Mushroom Soup");
+        SUPER_MAGIC_MUSHROOM_SOUP_NAME = root.getString("Super-Magic-Mushroom-Soup.name", "&6超級魔菇湯");
         if (root.contains("Super-Magic-Mushroom-Soup.lore")) {
             SUPER_MAGIC_MUSHROOM_SOUP_LORE = root.getStringList("Super-Magic-Mushroom-Soup.lore");
         } else {
-            SUPER_MAGIC_MUSHROOM_SOUP_LORE = Arrays.asList("&dFlight Soup", "&eCan fly 60 seconds");
+            SUPER_MAGIC_MUSHROOM_SOUP_LORE = Arrays.asList("&f聽說喝了可以有&b飛上天&f的感覺, 效果比&6魔菇湯&f還要好!", "&f可以讓玩家飛行&660 分鐘&f, 離開伺服器將暫停效果", "", "&e點擊右鍵使用！");
         }
-        SUPER_MAGIC_MUSHROOM_SOUP_DURATION = root.getInt("Super-Magic-Mushroom-Soup.duration", 60);
+        SUPER_MAGIC_MUSHROOM_SOUP_DURATION = root.getInt("Super-Magic-Mushroom-Soup.duration", 3600);
         SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE = root.getString("Super-Magic-Mushroom-Soup.texture", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFlNWQwYzIzZWMxYTFmODEzYzBjNjNmMTEyZTU1YjdiMWM4N2ZlY2QzMjY5YzBmZGJjZTk2ZDAzYjU1OGMwOCJ9fX0=");
 
         // Check if versions don't match
