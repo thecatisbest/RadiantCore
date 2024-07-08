@@ -3,6 +3,9 @@ package me.thecatisbest.radiantcore.utilis;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Utilis {
 
     /**
@@ -11,6 +14,14 @@ public class Utilis {
      */
     public static String color(String msg) {
         return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+
+    public static List<String> color(List<String> msg){
+        final List<String> colored = new ArrayList<>();
+        for (String s : msg) {
+            colored.add(color(s));
+        }
+        return colored;
     }
 
     /**

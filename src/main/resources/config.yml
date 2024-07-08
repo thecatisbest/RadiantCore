@@ -1,8 +1,0 @@
-# Radiant Configuration
-
-# Use Sneak(Swift) + (F) key to execute commands (Use ; to make more commands (please don't add spaces) )
-# Player ID Placeholder: %player%
-commands: "say hi;say I'm %player%"
-
-# Change the swap action
-cancel_swap: true
