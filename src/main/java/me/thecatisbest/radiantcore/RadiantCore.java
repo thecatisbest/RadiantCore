@@ -9,6 +9,7 @@ import me.thecatisbest.radiantcore.listeners.PlayerListener;
 import me.thecatisbest.radiantcore.listeners.SlimeMap;
 import me.thecatisbest.radiantcore.listeners.SlimeballListener;
 import me.thecatisbest.radiantcore.utilis.ItemUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class RadiantCore extends JavaPlugin {
@@ -31,6 +32,13 @@ public final class RadiantCore extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new SlimeMap(), this);
         this.getServer().getPluginManager().registerEvents(new SlimeballListener(), this);
         this.getCommand("radiant").setExecutor(new RadiantCommand());
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new Placeholders().register();
+            Bukkit.getLogger().info("PlaceholderAPI found! PAPI placeholders will work!");
+        } else {
+            Bukkit.getLogger().info("PlaceholderAPI was not Found! PAPI placeholders won't work!");
+        }
     }
 
     @Override

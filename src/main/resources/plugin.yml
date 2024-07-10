@@ -3,8 +3,7 @@ author: tcib_cat
 version: '${project.version}'
 main: me.thecatisbest.radiantcore.RadiantCore
 api-version: 1.13
-softdepend:
-  - HeadDatabase
+softdepend: [PlaceholderAPI]
 commands:
   radiant:
     description: The radiant command

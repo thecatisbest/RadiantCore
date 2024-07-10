@@ -21,6 +21,11 @@ public class PlayerStorage {
     }
 
     public void loadFlyTimes() {
+        File dataFolder = plugin.getDataFolder();
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+
         flyTimesFile = new File(plugin.getDataFolder(), "data.yml");
         if (!flyTimesFile.exists()) {
             try {
