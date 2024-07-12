@@ -77,9 +77,10 @@ public class MushroomSoup implements Listener {
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
-        if (flyTimes.containsKey(playerId)) {
-            startFlying(player);
+        if (tasks.containsKey(playerId)) {
+            Bukkit.getScheduler().cancelTask(tasks.get(playerId));
         }
+        startFlying(player);
     }
 
     private void startFlying(Player player) {
@@ -126,6 +127,7 @@ public class MushroomSoup implements Listener {
 
             flyTimes.put(playerId, timeLeft);
             RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
+            XSound.ENTITY_GENERIC_DRINK.play(player);
             player.sendMessage(Utilis.color("&a你的飛行時間已延長至 &c" + timeLeft + " &a秒"));
             if (tasks.containsKey(playerId)) {
                 Bukkit.getScheduler().cancelTask(tasks.get(playerId));
