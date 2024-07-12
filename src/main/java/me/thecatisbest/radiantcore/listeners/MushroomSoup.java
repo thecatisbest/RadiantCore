@@ -1,5 +1,7 @@
 package me.thecatisbest.radiantcore.listeners;
 
+import com.Zrips.CMI.events.CMIAfkEnterEvent;
+import com.Zrips.CMI.events.CMIAfkLeaveEvent;
 import com.cryptomorin.xseries.XSound;
 import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.config.GeneralConfig;
@@ -79,8 +81,29 @@ public class MushroomSoup implements Listener {
         UUID playerId = player.getUniqueId();
         if (tasks.containsKey(playerId)) {
             Bukkit.getScheduler().cancelTask(tasks.get(playerId));
+            startFlying(player);
         }
-        startFlying(player);
+    }
+
+    @EventHandler
+    public void onPlayerAFK(CMIAfkEnterEvent event) {
+        Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+        if (tasks.containsKey(playerId)) {
+            Bukkit.getScheduler().cancelTask(tasks.get(playerId));
+        }
+    }
+
+    @EventHandler
+    public void onPlayerLeaveAFK(CMIAfkLeaveEvent event) {
+        Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+
+        int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 從文件中加載
+        if (savedTime > 0) {
+            flyTimes.put(playerId, savedTime);
+            startFlying(player);
+        }
     }
 
     private void startFlying(Player player) {
@@ -128,7 +151,7 @@ public class MushroomSoup implements Listener {
             flyTimes.put(playerId, timeLeft);
             RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
             XSound.ENTITY_GENERIC_DRINK.play(player);
-            player.sendMessage(Utilis.color("&a你的飛行時間已延長至 &c" + timeLeft + " &a秒"));
+            player.sendMessage(Utilis.color("&e你的飛行時間已延長至 &6" + timeLeft + " &e秒"));
             if (tasks.containsKey(playerId)) {
                 Bukkit.getScheduler().cancelTask(tasks.get(playerId));
             }
@@ -139,7 +162,7 @@ public class MushroomSoup implements Listener {
             int timeLeft = flyTimes.getOrDefault(playerId, duration);
             RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
             XSound.ENTITY_GENERIC_DRINK.play(player);
-            player.sendMessage(Utilis.color("&a你現在可以飛行 &c" + timeLeft + " &a秒"));
+            player.sendMessage(Utilis.color("&e你現在可以飛行 &6" + timeLeft + " &e秒"));
         }
 
         // 消耗掉头颅
