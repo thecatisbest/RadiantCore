@@ -3,9 +3,9 @@ package me.thecatisbest.radiantcore.utilis.builder;
 import me.thecatisbest.radiantcore.utilis.Utilis;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemBuilder {
@@ -47,5 +47,14 @@ public class ItemBuilder {
 
     public ItemStack texture(String url) {
         return SkullBuilder.itemWithBase64(this.itemStack, url);
+    }
+
+    public ItemBuilder repairItem() {
+        ItemMeta meta = this.itemStack.getItemMeta();
+        if (meta instanceof Damageable) {
+            ((Damageable) meta).setDamage(0);
+            this.itemStack.setItemMeta(meta);
+        }
+        return this;
     }
 }

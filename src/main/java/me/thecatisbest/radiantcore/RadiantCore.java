@@ -1,14 +1,13 @@
 package me.thecatisbest.radiantcore;
 
 import lombok.Getter;
+import lombok.NonNull;
 import me.thecatisbest.radiantcore.commands.RadiantCommand;
-import me.thecatisbest.radiantcore.config.GeneralConfig;
+import me.thecatisbest.radiantcore.config.LoadConfigs;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
-import me.thecatisbest.radiantcore.listeners.MushroomSoup;
-import me.thecatisbest.radiantcore.listeners.PlayerListener;
-import me.thecatisbest.radiantcore.listeners.SlimeMap;
-import me.thecatisbest.radiantcore.listeners.SlimeballListener;
+import me.thecatisbest.radiantcore.listeners.*;
 import me.thecatisbest.radiantcore.utilis.ItemUtils;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,6 +17,7 @@ public final class RadiantCore extends JavaPlugin {
     @Getter private static RadiantCore instance;
     @Getter private PlayerStorage playerStorage;
     @Getter private ItemUtils itemUtils;
+    private BukkitAudiences adventure;
 
     @Override
     public void onEnable() {
@@ -26,9 +26,12 @@ public final class RadiantCore extends JavaPlugin {
         playerStorage = new PlayerStorage(this);
         itemUtils = new ItemUtils();
         playerStorage.startAutoSaveTask();
-        reloadConfig();
+        LoadConfigs.loadConfigs();
+        this.adventure = BukkitAudiences.create(this);
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         this.getServer().getPluginManager().registerEvents(new MushroomSoup(), this);
+        this.getServer().getPluginManager().registerEvents(new BuildersWand(), this);
+        this.getServer().getPluginManager().registerEvents(new GrapplingHook(), this);
         this.getServer().getPluginManager().registerEvents(new SlimeMap(), this);
         this.getServer().getPluginManager().registerEvents(new SlimeballListener(), this);
         this.getCommand("radiant").setExecutor(new RadiantCommand());
@@ -49,8 +52,10 @@ public final class RadiantCore extends JavaPlugin {
         }
     }
 
-    @Override
-    public void reloadConfig() {
-        GeneralConfig.loadAndUpdate(this);
+    public @NonNull BukkitAudiences adventure() {
+        if(this.adventure == null) {
+            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
+        }
+        return this.adventure;
     }
 }

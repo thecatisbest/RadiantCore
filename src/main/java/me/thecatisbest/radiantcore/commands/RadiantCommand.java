@@ -1,15 +1,15 @@
 package me.thecatisbest.radiantcore.commands;
 
 import me.thecatisbest.radiantcore.RadiantCore;
+import me.thecatisbest.radiantcore.config.LoadConfigs;
+import me.thecatisbest.radiantcore.listeners.BuildersWand;
 import me.thecatisbest.radiantcore.listeners.SlimeMap;
 import me.thecatisbest.radiantcore.utilis.Utilis;
-import me.thecatisbest.radiantcore.utilis.builder.SkullBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Slime;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.plugin.Plugin;
@@ -36,6 +36,15 @@ public class RadiantCommand implements TabExecutor {
         }
 
         if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("restorewand")) {
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage("你不能在控制台裡輸入這個指令");
+                    return true;
+                }
+                Player player = (Player) sender;
+
+                BuildersWand.restoreWandOops(player);
+            }
             if (args[0].equalsIgnoreCase("slimemap")) {
                 if (!(sender instanceof Player)) {
                     sender.sendMessage("你不能在控制台裡輸入這個指令");
@@ -79,7 +88,7 @@ public class RadiantCommand implements TabExecutor {
                     sender.sendMessage(Utilis.color("&c你沒有權限使用這個指令！"));
                     return true;
                 }
-                RadiantCore.getInstance().reloadConfig();
+                LoadConfigs.loadConfigs();
                 sender.sendMessage(Utilis.color("&a已重新加載配置文件!"));
                 return true;
             }
@@ -106,6 +115,14 @@ public class RadiantCommand implements TabExecutor {
                     break;
                 case "SUPER_MAGIC_MUSHROOM_SOUP":
                     player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().super_magic_mushroom_soup.toItemStack());
+                    player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
+                    break;
+                case "BUILDERS_WAND":
+                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().builders_wand.toItemStack());
+                    player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
+                    break;
+                case "GRAPPLING_HOOK":
+                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().grappling_hook.toItemStack());
                     player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
                     break;
                 default:
@@ -161,6 +178,8 @@ public class RadiantCommand implements TabExecutor {
         } else if (args.length == 2 && args[0].equalsIgnoreCase("getcustomitem")) {
             toComplete.add("MAGIC_MUSHROOM_SOUP");
             toComplete.add("SUPER_MAGIC_MUSHROOM_SOUP");
+            toComplete.add("BUILDERS_WAND");
+            toComplete.add("GRAPPLING_HOOK");
         }
 
         /*

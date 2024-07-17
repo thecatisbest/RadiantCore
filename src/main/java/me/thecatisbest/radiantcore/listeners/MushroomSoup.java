@@ -4,7 +4,7 @@ import com.Zrips.CMI.events.CMIAfkEnterEvent;
 import com.Zrips.CMI.events.CMIAfkLeaveEvent;
 import com.cryptomorin.xseries.XSound;
 import me.thecatisbest.radiantcore.RadiantCore;
-import me.thecatisbest.radiantcore.config.GeneralConfig;
+import me.thecatisbest.radiantcore.config.ConfigValue;
 import me.thecatisbest.radiantcore.utilis.ItemUtils;
 import me.thecatisbest.radiantcore.utilis.Utilis;
 import org.bukkit.Bukkit;
@@ -26,8 +26,8 @@ public class MushroomSoup implements Listener {
 
     private final HashMap<UUID, Integer> flyTimes = new HashMap<>();
     private final HashMap<UUID, Integer> tasks = new HashMap<>();
-    private final int magicDuration = GeneralConfig.MAGIC_MUSHROOM_SOUP_DURATION;
-    private final int super_magicDuration = GeneralConfig.SUPER_MAGIC_MUSHROOM_SOUP_DURATION;
+    private final int magicDuration = ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION;
+    private final int super_magicDuration = ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION;
     private final ItemUtils itemUtils = RadiantCore.getInstance().getItemUtils();
 
     @EventHandler
