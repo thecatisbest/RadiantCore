@@ -26,8 +26,9 @@ public class MushroomSoup implements Listener {
 
     private final HashMap<UUID, Integer> flyTimes = new HashMap<>();
     private final HashMap<UUID, Integer> tasks = new HashMap<>();
+    private final HashMap<UUID, Boolean> isAFK = new HashMap<>();
     private final int magicDuration = ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION;
-    private final int super_magicDuration = ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION;
+    private final int superMagicDuration = ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION;
     private final ItemUtils itemUtils = RadiantCore.getInstance().getItemUtils();
 
     @EventHandler
@@ -36,14 +37,31 @@ public class MushroomSoup implements Listener {
         UUID playerId = player.getUniqueId();
         ItemStack item = event.getItem();
 
-        if (item != null && item.isSimilar(this.itemUtils.magic_mushroom_soup.toItemStack()) &&
-                (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-            handleSoupUse(player, playerId, item, magicDuration);
+        int maxFlyTimes = 24 * 60 * 60; // 一天的秒数
+        int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
+
+        if (isAFK.containsKey(playerId)) {
+            player.sendMessage(Utilis.color("&c你不能在 AFK 狀態下使用蘑菇湯！"));
+            event.setCancelled(true);
+            return;
+        }
+
+        if (flyTimes.getOrDefault(playerId, savedTime) > maxFlyTimes) {
+            player.sendMessage(Utilis.color("&c你無法再延長飛行時間，因為已經達到最大效果時間 (一天)！"));
+            event.setCancelled(true);
+            return;
+        }
+
+            if (item != null && item.isSimilar(this.itemUtils.magic_mushroom_soup.toItemStack()) &&
+                    (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+                handleSoupUse(player, playerId, item, magicDuration);
+                event.setCancelled(true);
         }
 
         if (item != null && item.isSimilar(this.itemUtils.super_magic_mushroom_soup.toItemStack()) &&
                 (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-            handleSoupUse(player, playerId, item, super_magicDuration);
+            handleSoupUse(player, playerId, item, superMagicDuration);
+            event.setCancelled(true);
         }
     }
 
@@ -53,14 +71,14 @@ public class MushroomSoup implements Listener {
         UUID playerId = player.getUniqueId();
 
         if (flyTimes.containsKey(playerId)) {
-            int timeLeft = flyTimes.getOrDefault(playerId, magicDuration);
+            int timeLeft = flyTimes.getOrDefault(playerId, 0);
             RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
-            flyTimes.put(playerId, timeLeft);
             if (tasks.containsKey(playerId)) {
                 Bukkit.getScheduler().cancelTask(tasks.get(playerId));
                 tasks.remove(playerId);
             }
         }
+        isAFK.remove(playerId);
     }
 
     @EventHandler
@@ -68,7 +86,7 @@ public class MushroomSoup implements Listener {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
-        int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 從文件中加載
+        int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
         if (savedTime > 0) {
             flyTimes.put(playerId, savedTime);
             startFlying(player);
@@ -79,9 +97,9 @@ public class MushroomSoup implements Listener {
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
-        if (tasks.containsKey(playerId)) {
-            Bukkit.getScheduler().cancelTask(tasks.get(playerId));
-            startFlying(player);
+        if (flyTimes.containsKey(playerId)) {
+            player.setAllowFlight(true);
+            player.setFlying(true);
         }
     }
 
@@ -91,7 +109,9 @@ public class MushroomSoup implements Listener {
         UUID playerId = player.getUniqueId();
         if (tasks.containsKey(playerId)) {
             Bukkit.getScheduler().cancelTask(tasks.get(playerId));
+            tasks.remove(playerId);
         }
+        isAFK.put(playerId, true);
     }
 
     @EventHandler
@@ -99,11 +119,12 @@ public class MushroomSoup implements Listener {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
-        int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 從文件中加載
+        int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
         if (savedTime > 0) {
             flyTimes.put(playerId, savedTime);
             startFlying(player);
         }
+        isAFK.remove(playerId);
     }
 
     private void startFlying(Player player) {
@@ -111,28 +132,27 @@ public class MushroomSoup implements Listener {
         player.setAllowFlight(true);
         player.setFlying(true);
 
-        int timeLeft = flyTimes.getOrDefault(playerId, magicDuration);
-        flyTimes.remove(playerId);
+        int timeLeft = flyTimes.getOrDefault(playerId, 0);
 
         int taskId = new BukkitRunnable() {
             int seconds = timeLeft;
 
             @Override
             public void run() {
-                if (seconds == 0) {
+                if (seconds <= 0) {
                     player.setAllowFlight(false);
                     player.setFlying(false);
                     player.sendMessage(Utilis.color("&c你的飛行效果已結束！"));
                     this.cancel();
                     tasks.remove(playerId);
                     flyTimes.remove(playerId);
-                    RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, 0); // 移除文件中的記錄
+                    RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, 0); // 移除文件中的记录
                     return;
                 } else {
                     if (seconds == 60 || seconds == 30 || seconds == 10 || seconds <= 5) {
                         player.sendMessage(Utilis.color("&c你的飛行效果將在 &e" + seconds + " &c秒後結束！"));
                     }
-                    if (seconds >= 1) {
+                    if (seconds > 0) {
                         flyTimes.put(playerId, seconds);
                         RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, seconds); // 保存到文件
                     }
@@ -145,29 +165,28 @@ public class MushroomSoup implements Listener {
     }
 
     private void handleSoupUse(Player player, UUID playerId, ItemStack item, int duration) {
-        if (flyTimes.containsKey(playerId)) {
-            int timeLeft = flyTimes.getOrDefault(playerId, duration) + duration;
+        int currentTime = flyTimes.getOrDefault(playerId, 0);
+        int newTime = currentTime + duration;
 
-            flyTimes.put(playerId, timeLeft);
-            RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
-            XSound.ENTITY_GENERIC_DRINK.play(player);
-            player.sendMessage(Utilis.color("&e你的飛行時間已延長至 &6" + timeLeft + " &e秒"));
-            if (tasks.containsKey(playerId)) {
-                Bukkit.getScheduler().cancelTask(tasks.get(playerId));
-            }
-            startFlying(player);
+        boolean isFirstUse = currentTime == 0;
+
+        flyTimes.put(playerId, newTime);
+        RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, newTime); // 保存到文件
+        XSound.ENTITY_GENERIC_DRINK.play(player);
+
+        if (tasks.containsKey(playerId)) {
+            Bukkit.getScheduler().cancelTask(tasks.get(playerId));
+            tasks.remove(playerId);
+        }
+        startFlying(player);
+
+        if (isFirstUse) {
+            player.sendMessage(Utilis.color("&e你現在可以飛行 &6" + newTime + " &e秒"));
         } else {
-            startFlying(player);
-
-            int timeLeft = flyTimes.getOrDefault(playerId, duration);
-            RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
-            XSound.ENTITY_GENERIC_DRINK.play(player);
-            player.sendMessage(Utilis.color("&e你現在可以飛行 &6" + timeLeft + " &e秒"));
+            player.sendMessage(Utilis.color("&e你的飛行時間已延長至 &6" + newTime + " &e秒"));
         }
 
-        // 消耗掉头颅
+        // 消耗掉蘑菇汤
         item.setAmount(item.getAmount() - 1);
     }
 }
-
-

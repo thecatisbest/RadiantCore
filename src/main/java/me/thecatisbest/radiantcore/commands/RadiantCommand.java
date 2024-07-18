@@ -121,10 +121,6 @@ public class RadiantCommand implements TabExecutor {
                     player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().builders_wand.toItemStack());
                     player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
                     break;
-                case "GRAPPLING_HOOK":
-                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().grappling_hook.toItemStack());
-                    player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
-                    break;
                 default:
                     player.sendMessage(Utilis.color("&c無效的物品: &e" + itemType));
                     break;

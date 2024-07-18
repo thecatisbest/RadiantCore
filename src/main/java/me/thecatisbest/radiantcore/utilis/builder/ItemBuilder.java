@@ -48,13 +48,4 @@ public class ItemBuilder {
     public ItemStack texture(String url) {
         return SkullBuilder.itemWithBase64(this.itemStack, url);
     }
-
-    public ItemBuilder repairItem() {
-        ItemMeta meta = this.itemStack.getItemMeta();
-        if (meta instanceof Damageable) {
-            ((Damageable) meta).setDamage(0);
-            this.itemStack.setItemMeta(meta);
-        }
-        return this;
-    }
 }

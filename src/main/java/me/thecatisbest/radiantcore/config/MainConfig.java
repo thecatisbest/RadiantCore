@@ -44,28 +44,24 @@ public class MainConfig {
         }
 
         // read it
-        ConfigValue.COMMANDS = config.getString("commands", ConfigValue.COMMANDS);
+        ConfigValue.COMMANDS = config.getString("commands");
         ConfigValue.SWAP = config.getBoolean("cancel_swap");
 
-        ConfigValue.MAGIC_MUSHROOM_SOUP_NAME = config.getString("Magic-Mushroom-Soup.name", ConfigValue.MAGIC_MUSHROOM_SOUP_NAME);
+        ConfigValue.MAGIC_MUSHROOM_SOUP_NAME = config.getString("Magic-Mushroom-Soup.name");
         if (config.contains("Magic-Mushroom-Soup.lore"))
             ConfigValue.MAGIC_MUSHROOM_SOUP_LORE = config.getStringList("Magic-Mushroom-Soup.lore");
         ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION = config.getInt("Magic-Mushroom-Soup.duration");
         ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE = config.getString("Magic-Mushroom-Soup.texture");
 
-        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME = config.getString("Super-Magic-Mushroom-Soup.name", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME);
+        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME = config.getString("Super-Magic-Mushroom-Soup.name");
         if (config.contains("Super-Magic-Mushroom-Soup.lore"))
             ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE = config.getStringList("Super-Magic-Mushroom-Soup.lore");
         ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION = config.getInt("Super-Magic-Mushroom-Soup.duration");
         ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE = config.getString("Super-Magic-Mushroom-Soup.texture");
 
-        ConfigValue.BUILDERS_WAND_NAME = config.getString("Builders-Wand.name", ConfigValue.BUILDERS_WAND_NAME);
+        ConfigValue.BUILDERS_WAND_NAME = config.getString("Builders-Wand.name");
         if (config.contains("Builders-Wand.lore"))
             ConfigValue.BUILDERS_WAND_LORE = config.getStringList("Builders-Wand.lore");
-
-        ConfigValue.GRAPPLING_HOOK_NAME = config.getString("Grappling-Hook.name", ConfigValue.GRAPPLING_HOOK_NAME);
-        if (config.contains("Grappling-Hook.lore"))
-            ConfigValue.GRAPPLING_HOOK_LORE = config.getStringList("Grappling-Hook.lore");
 
         // auto update file if newer version
         {
@@ -99,16 +95,13 @@ public class MainConfig {
         config.set("Magic-Mushroom-Soup.duration", ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION);
         config.set("Magic-Mushroom-Soup.texture", ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE);
 
-        config.set("Super-Magic-Mushroom-Soup.name", ConfigValue.MAGIC_MUSHROOM_SOUP_NAME);
-        config.set("Super-Magic-Mushroom-Soup.lore", ConfigValue.MAGIC_MUSHROOM_SOUP_LORE);
-        config.set("Super-Magic-Mushroom-Soup.duration", ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION);
-        config.set("Super-Magic-Mushroom-Soup.texture", ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE);
+        config.set("Super-Magic-Mushroom-Soup.name", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME);
+        config.set("Super-Magic-Mushroom-Soup.lore", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE);
+        config.set("Super-Magic-Mushroom-Soup.duration", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION);
+        config.set("Super-Magic-Mushroom-Soup.texture", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE);
 
         config.set("Builders-Wand.name", ConfigValue.BUILDERS_WAND_NAME);
         config.set("Builders-Wand.lore", ConfigValue.BUILDERS_WAND_LORE);
-
-        config.set("Grappling-Hook.name", ConfigValue.GRAPPLING_HOOK_NAME);
-        config.set("Grappling-Hook.lore", ConfigValue.GRAPPLING_HOOK_LORE);
 
         config.save(getFile());
     }

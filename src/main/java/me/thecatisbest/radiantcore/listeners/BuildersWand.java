@@ -8,7 +8,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -137,9 +136,8 @@ public class BuildersWand implements Listener {
                             .color(NamedTextColor.GOLD))
                     .append(Component.text(" 個方塊! ")
                             .color(NamedTextColor.YELLOW))
-                    .append(Component.text("UNDO")
+                    .append(Component.text("撤銷")
                             .color(NamedTextColor.GREEN)
-                            .decoration(TextDecoration.BOLD, true)
                             .hoverEvent(HoverEvent.showText(Component.text("點擊撤銷！")
                                     .color(NamedTextColor.YELLOW)))
                             .clickEvent(ClickEvent.runCommand("/radiant restorewand")));

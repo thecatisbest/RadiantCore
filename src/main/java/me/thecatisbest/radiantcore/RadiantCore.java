@@ -31,7 +31,6 @@ public final class RadiantCore extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         this.getServer().getPluginManager().registerEvents(new MushroomSoup(), this);
         this.getServer().getPluginManager().registerEvents(new BuildersWand(), this);
-        this.getServer().getPluginManager().registerEvents(new GrapplingHook(), this);
         this.getServer().getPluginManager().registerEvents(new SlimeMap(), this);
         this.getServer().getPluginManager().registerEvents(new SlimeballListener(), this);
         this.getCommand("radiant").setExecutor(new RadiantCommand());
