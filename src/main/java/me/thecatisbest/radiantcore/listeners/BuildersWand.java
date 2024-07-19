@@ -36,6 +36,11 @@ public class BuildersWand implements Listener {
         ItemStack item = event.getItem();
         Block block = event.getClickedBlock();
 
+        if (player.getGameMode() == GameMode.ADVENTURE && item != null && item.isSimilar(this.itemUtils.builders_wand.toItemStack())) {
+            player.sendMessage(Utilis.color("&c你無法在這裡使用建造者魔杖！"));
+            return;
+        }
+
         if (item != null && item.isSimilar(this.itemUtils.builders_wand.toItemStack()) &&
                 (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(RadiantCore.getInstance(),
