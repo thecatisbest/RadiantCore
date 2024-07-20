@@ -39,11 +39,14 @@ public class MushroomSoup implements Listener {
 
         int maxFlyTimes = 24 * 60 * 60; // 一天的秒数
         int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
-
-        if (isAFK.containsKey(playerId)) {
-            player.sendMessage(Utilis.color("&c你不能在 AFK 狀態下使用蘑菇湯！"));
-            event.setCancelled(true);
-            return;
+        
+        if (item != null && (item.isSimilar(itemUtils.magic_mushroom_soup.toItemStack()) ||
+                item.isSimilar(itemUtils.super_magic_mushroom_soup.toItemStack()))) {
+            if ((isAFK.containsKey(playerId))){
+                player.sendMessage(Utilis.color("&c你不能在 AFK 狀態下使用蘑菇湯！"));
+                event.setCancelled(true);
+                return;
+            }
         }
 
         if (flyTimes.getOrDefault(playerId, savedTime) > maxFlyTimes) {
