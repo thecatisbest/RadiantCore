@@ -1,8 +1,10 @@
 package me.thecatisbest.radiantcore.listeners;
 
 import me.thecatisbest.radiantcore.RadiantCore;
+import me.thecatisbest.radiantcore.config.PlayerStorage;
 import me.thecatisbest.radiantcore.utilis.ItemUtils;
 import me.thecatisbest.radiantcore.utilis.Utilis;
+import me.thecatisbest.radiantcore.utilis.builder.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -13,11 +15,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +32,8 @@ public class BuildersWand implements Listener {
 
     private final ItemUtils itemUtils = RadiantCore.getInstance().getItemUtils();
     private static final Map<Player, List<BlockState>> wandOops = new HashMap<>();
+    private static final Map<UUID, Inventory> wandInventories = new HashMap<>();
+    private static final String inventoryName = "魔杖儲存庫";
 
     @EventHandler
     public void onPlayerUseItem(PlayerInteractEvent event) {
@@ -36,24 +41,50 @@ public class BuildersWand implements Listener {
         ItemStack item = event.getItem();
         Block block = event.getClickedBlock();
 
-        if (player.getGameMode() == GameMode.ADVENTURE && item != null && item.isSimilar(this.itemUtils.builders_wand.toItemStack())) {
-            player.sendMessage(Utilis.color("&c你無法在這裡使用建造者魔杖！"));
-            return;
+        if (item != null && ItemBuilder.hasUniqueId(itemUtils.builders_wand().toItemStack(), ItemUtils.Key.BUILDERS_WAND)) {
+            if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                event.setCancelled(true);
+                openWandInventory(player);
+            } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                if (player.getGameMode() == GameMode.ADVENTURE) {
+                    player.sendMessage(Utilis.color("&c你無法在這裡使用建造者魔杖！"));
+                    return;
+                }
+                Bukkit.getScheduler().scheduleSyncDelayedTask(RadiantCore.getInstance(),
+                        () -> fillConnectedFaces(player, block, event.getBlockFace(), this.itemUtils.builders_wand().toItemStack())
+                        , 1);
+            }
         }
+    }
 
-        if (item != null && item.isSimilar(this.itemUtils.builders_wand.toItemStack()) &&
-                (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(RadiantCore.getInstance(),
-                    () -> fillConnectedFaces(player, block, event.getBlockFace(), this.itemUtils.builders_wand.toItemStack())
-                    , 1);
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (event.getPlayer() instanceof Player) {
+            Player player = (Player) event.getPlayer();
+            Inventory inventory = getWandInventory(player);
+            if (inventory != null) {
+                PlayerStorage.saveWandInventory(player.getUniqueId(), inventory);
+            }
         }
+    }
 
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        Inventory inventory = getWandInventory(player);
+        if (inventory != null) {
+            if (event.getCurrentItem().isSimilar(itemUtils.builders_wand().toItemStack())) {
+                event.setCancelled(true);
+                event.getWhoClicked().sendMessage(Utilis.color("&c你不能把建造者魔杖放進儲存庫裡！"));
+            }
+        }
     }
 
     // main logic for builder's wand
     public void fillConnectedFaces(Player player, Block origin, BlockFace face, ItemStack item) {
         Material fillMaterial = origin.getType();
-        int blocksInInventory = countBlocks(player.getInventory(), origin.getType());
+        int blocksInInventory = countBlocks(player, new ItemStack(fillMaterial));
         boolean needBlocks = (player.getGameMode() != GameMode.CREATIVE);
         int blockLimit = 250; if (blocksInInventory < blockLimit && needBlocks) blockLimit = blocksInInventory;
         ArrayList<Block> blocks = new ArrayList<>(); blocks.add(origin);
@@ -130,7 +161,7 @@ public class BuildersWand implements Listener {
 
         // finalize block place action + take blocks from inv if in survival
         if (blocksPlaced != 0) {
-            if (needBlocks) removeBlocks(player.getInventory(), origin.getType(), blocksPlaced);
+            if (needBlocks) removeBlocks(player, new ItemStack(origin.getType()), blocksPlaced);
 
             player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_BULLET_HIT, 1, 1);
             player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE, 0);
@@ -153,25 +184,6 @@ public class BuildersWand implements Listener {
         putWandOops(player, blockStates);
     }
 
-    // counts amount of blocks of type m in inventory inv
-    public int countBlocks(Inventory inv, Material m) {
-        int blockAmount = 0;
-
-        for (ItemStack item : inv){
-            if (item != null){
-                if (item.getType() == m){
-                    blockAmount += item.getAmount();
-                }
-            }
-        }
-        return blockAmount;
-    }
-
-    // remove blockAmount blocks of type m from inv
-    public void removeBlocks(Inventory inv, Material m, int blockAmount){
-        inv.removeItem(new ItemStack (m, blockAmount));
-    }
-
     // save a builder's wand action for the player
     // places the first element of the list as a blockstate from before the wand usage
     public static void putWandOops(Player player, List<BlockState> blocks) {
@@ -180,9 +192,6 @@ public class BuildersWand implements Listener {
 
     public boolean canPlaceBlock(Player player, Location l) {
         return true;
-        //BlockBreakEvent e = new BlockBreakEvent(l.getWorld().getBlockAt(l), player);
-        //Bukkit.getServer().getPluginManager().callEvent(e);
-        //return !e.isCancelled();
     }
 
     // restore the most recent builder's wand action for the player
@@ -198,24 +207,55 @@ public class BuildersWand implements Listener {
 
         for (int counter = 1; counter < blocks.size(); counter++) {
             world.getBlockAt(blocks.get(counter).getLocation()).setType(blocks.get(counter).getType());
-            // Bukkit.getLogger().info(blocks.get(counter).getType().toString());
         }
-
 
         wandOops.remove(player);
         player.sendMessage(Utilis.color("&e已撤銷 &6" + (blocks.size() - 1) + " &e個方塊！"));
 
-        if (player.getGameMode() == GameMode.SURVIVAL)
-            givePlayerItemSafely(player, new ItemStack(returnPoint.getType(), blocks.size() - 1));
+        if (player.getGameMode() == GameMode.SURVIVAL) {
+            ItemStack returnItem = new ItemStack(returnPoint.getType(), blocks.size() - 1);
+            getWandInventory(player).addItem(returnItem);
+        }
     }
 
-    // adds item to the player's inventory. Drops the item on the ground if inventory is full
-    public static void givePlayerItemSafely(Player player, ItemStack item) {
-        final Map<Integer, ItemStack> items = player.getInventory().addItem(item);
-        for (final ItemStack i : items.values()) {
-            if (i == null || i.getType() == Material.AIR) continue;
-            Entity e = player.getWorld().dropItemNaturally(player.getLocation(), i);
-            e.setVelocity(player.getLocation().getDirection().multiply(0.1f));
+    // Inventory
+    private static void openWandInventory(Player player) {
+        Inventory inv = wandInventories.computeIfAbsent(player.getUniqueId(), k -> {
+            Inventory newInv = Bukkit.createInventory(null, 27, inventoryName);
+            PlayerStorage.loadWandInventory(player.getUniqueId(), newInv);
+            return newInv;
+        });
+        player.openInventory(inv);
+    }
+
+    private static Inventory getWandInventory(Player player) {
+        return wandInventories.get(player.getUniqueId());
+    }
+
+    private static void removeBlocks(Player player, ItemStack item, int amount) {
+        Inventory inv = getWandInventory(player);
+        if (inv != null) {
+            inv.removeItem(new ItemStack(item.getType(), amount));
+            PlayerStorage.saveWandInventory(player.getUniqueId(), inv);
+        }
+    }
+
+    private static int countBlocks(Player player, ItemStack item) {
+        Inventory inv = getWandInventory(player);
+        if (inv == null) return 0;
+
+        int count = 0;
+        for (ItemStack i : inv.getContents()) {
+            if (i != null && i.getType() == item.getType()) {
+                count += i.getAmount();
+            }
+        }
+        return count;
+    }
+
+    public static void saveAllInventories() {
+        for (Map.Entry<UUID, Inventory> entry : wandInventories.entrySet()) {
+            PlayerStorage.saveWandInventory(entry.getKey(), entry.getValue());
         }
     }
 }

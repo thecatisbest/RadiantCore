@@ -47,7 +47,7 @@ public final class RadiantCore extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         if (playerStorage != null) {
-            playerStorage.saveFlyTimes();
+            playerStorage.saveConfig();
         }
     }
 

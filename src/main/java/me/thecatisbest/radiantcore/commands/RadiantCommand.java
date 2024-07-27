@@ -110,15 +110,15 @@ public class RadiantCommand implements TabExecutor {
 
             switch (itemType) {
                 case "MAGIC_MUSHROOM_SOUP":
-                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().magic_mushroom_soup.toItemStack());
+                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().magic_mushroom_soup().toItemStack());
                     player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
                     break;
                 case "SUPER_MAGIC_MUSHROOM_SOUP":
-                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().super_magic_mushroom_soup.toItemStack());
+                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().super_magic_mushroom_soup().toItemStack());
                     player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
                     break;
                 case "BUILDERS_WAND":
-                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().builders_wand.toItemStack());
+                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().builders_wand().toItemStack());
                     player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
                     break;
                 default:

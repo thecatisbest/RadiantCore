@@ -7,6 +7,7 @@ import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.config.ConfigValue;
 import me.thecatisbest.radiantcore.utilis.ItemUtils;
 import me.thecatisbest.radiantcore.utilis.Utilis;
+import me.thecatisbest.radiantcore.utilis.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,6 +32,9 @@ public class MushroomSoup implements Listener {
     private final int superMagicDuration = ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION;
     private final ItemUtils itemUtils = RadiantCore.getInstance().getItemUtils();
 
+    private final ItemStack magic_mushroom_soup = itemUtils.magic_mushroom_soup().toItemStack();
+    private final ItemStack super_magic_mushroom_soup = itemUtils.super_magic_mushroom_soup().toItemStack();
+
     @EventHandler
     public void onPlayerUseSoup(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -40,8 +44,8 @@ public class MushroomSoup implements Listener {
         int maxFlyTimes = 24 * 60 * 60; // 一天的秒数
         int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
         
-        if (item != null && (item.isSimilar(itemUtils.magic_mushroom_soup.toItemStack()) ||
-                item.isSimilar(itemUtils.super_magic_mushroom_soup.toItemStack()))) {
+        if (item != null && (ItemBuilder.hasUniqueId(magic_mushroom_soup, ItemUtils.Key.MAGIC_MUSHROOM_SOUP)) ||
+                ItemBuilder.hasUniqueId(super_magic_mushroom_soup, ItemUtils.Key.SUPER_MAGIC_MUSHROOM_SOUP)) {
             if ((isAFK.containsKey(playerId))){
                 player.sendMessage(Utilis.color("&c你不能在 AFK 狀態下使用蘑菇湯！"));
                 event.setCancelled(true);
@@ -55,13 +59,13 @@ public class MushroomSoup implements Listener {
             return;
         }
 
-            if (item != null && item.isSimilar(this.itemUtils.magic_mushroom_soup.toItemStack()) &&
+            if (item != null && ItemBuilder.hasUniqueId(magic_mushroom_soup, ItemUtils.Key.MAGIC_MUSHROOM_SOUP) &&
                     (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
                 handleSoupUse(player, playerId, item, magicDuration);
                 event.setCancelled(true);
         }
 
-        if (item != null && item.isSimilar(this.itemUtils.super_magic_mushroom_soup.toItemStack()) &&
+        if (item != null && ItemBuilder.hasUniqueId(super_magic_mushroom_soup, ItemUtils.Key.SUPER_MAGIC_MUSHROOM_SOUP) &&
                 (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             handleSoupUse(player, playerId, item, superMagicDuration);
             event.setCancelled(true);
