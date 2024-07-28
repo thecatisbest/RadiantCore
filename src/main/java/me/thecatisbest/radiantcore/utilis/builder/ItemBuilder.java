@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
@@ -49,33 +48,27 @@ public class ItemBuilder {
         return SkullBuilder.itemWithBase64(this.itemStack, url);
     }
 
-    public ItemBuilder addUniqueId(String uniqueId) {
+    public ItemBuilder addUniqueId(String value) {
         ItemMeta meta = this.itemStack.getItemMeta();
         if (meta != null) {
-            PersistentDataContainer data = meta.getPersistentDataContainer();
-            NamespacedKey key = new NamespacedKey(RadiantCore.getInstance(), "unique_id");
-            data.set(key, PersistentDataType.STRING, uniqueId);
+            NamespacedKey namespacedKey = new NamespacedKey(RadiantCore.getInstance(), "unique_id");
+            meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.STRING, value);
             this.itemStack.setItemMeta(meta);
         }
         return this;
     }
 
-    public ItemBuilder addUniqueId(ItemUtils.Key Key) {
-        return addUniqueId(Key.getName());
+    public ItemBuilder addUniqueId(ItemUtils.Key key) {
+        return addUniqueId(key.getName());
     }
 
-    public static boolean hasUniqueId(ItemStack item, String uniqueId) {
-        if (item != null && item.hasItemMeta()) {
-            ItemMeta meta = item.getItemMeta();
-            PersistentDataContainer data = meta.getPersistentDataContainer();
-            NamespacedKey key = new NamespacedKey(RadiantCore.getInstance(), "unique_id");
-            return uniqueId.equals(data.get(key, PersistentDataType.STRING));
+    public static String getPersistentMetadata(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) {
+            return null;
         }
-        return false;
-    }
-
-    public static boolean hasUniqueId(ItemStack item, ItemUtils.Key Key) {
-        return hasUniqueId(item, Key.getName());
+        ItemMeta meta = item.getItemMeta();
+        NamespacedKey namespacedKey = new NamespacedKey(RadiantCore.getInstance(), "unique_id");
+        return meta.getPersistentDataContainer().get(namespacedKey, PersistentDataType.STRING);
     }
 
     public ItemStack toItemStack() {

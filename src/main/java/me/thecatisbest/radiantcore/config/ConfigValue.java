@@ -33,4 +33,9 @@ public class ConfigValue {
             "&f建築愛好者玩家必看",
             "&b點擊右鍵&f方塊的面以延伸所有連接的方塊"
     );
+    public static String GRAPPLING_HOOK_NAME = "&a抓鈎";
+    public static List<String> GRAPPLING_HOOK_LORE = Arrays.asList(
+            "&f能鈎到你想去的地方",
+            "&f夢想成爲蜘蛛俠的可以來用這個！"
+    );
 }

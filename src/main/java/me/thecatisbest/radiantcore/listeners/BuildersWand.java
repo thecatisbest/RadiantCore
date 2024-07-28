@@ -1,6 +1,7 @@
 package me.thecatisbest.radiantcore.listeners;
 
 import me.thecatisbest.radiantcore.RadiantCore;
+import me.thecatisbest.radiantcore.config.ConfigValue;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
 import me.thecatisbest.radiantcore.utilis.ItemUtils;
 import me.thecatisbest.radiantcore.utilis.Utilis;
@@ -33,15 +34,27 @@ public class BuildersWand implements Listener {
     private final ItemUtils itemUtils = RadiantCore.getInstance().getItemUtils();
     private static final Map<Player, List<BlockState>> wandOops = new HashMap<>();
     private static final Map<UUID, Inventory> wandInventories = new HashMap<>();
-    private static final String inventoryName = "魔杖儲存庫";
+    private static final String inventoryName = ConfigValue.BUILDERS_WAND_NAME;
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (wandInventories.containsValue(event.getInventory())) {
+            ItemStack currentItem = event.getCurrentItem();
+            if (currentItem != null && !currentItem.getType().isBlock() && currentItem.getType() == Material.PLAYER_HEAD) {
+                event.setCancelled(true);
+                event.getWhoClicked().sendMessage(Utilis.color("&c你只能將方塊放進儲存庫！"));
+            }
+        }
+    }
 
     @EventHandler
     public void onPlayerUseItem(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
         Block block = event.getClickedBlock();
+        String metadataValue = ItemBuilder.getPersistentMetadata(item);
 
-        if (item != null && ItemBuilder.hasUniqueId(itemUtils.builders_wand().toItemStack(), ItemUtils.Key.BUILDERS_WAND)) {
+        if (item != null && metadataValue != null && metadataValue.equals(ItemUtils.Key.BUILDERS_WAND.getName())) {
             if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 event.setCancelled(true);
                 openWandInventory(player);
@@ -64,19 +77,6 @@ public class BuildersWand implements Listener {
             Inventory inventory = getWandInventory(player);
             if (inventory != null) {
                 PlayerStorage.saveWandInventory(player.getUniqueId(), inventory);
-            }
-        }
-    }
-
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        Inventory inventory = getWandInventory(player);
-        if (inventory != null) {
-            if (event.getCurrentItem().isSimilar(itemUtils.builders_wand().toItemStack())) {
-                event.setCancelled(true);
-                event.getWhoClicked().sendMessage(Utilis.color("&c你不能把建造者魔杖放進儲存庫裡！"));
             }
         }
     }
@@ -219,9 +219,9 @@ public class BuildersWand implements Listener {
     }
 
     // Inventory
-    private static void openWandInventory(Player player) {
+    public static void openWandInventory(Player player) {
         Inventory inv = wandInventories.computeIfAbsent(player.getUniqueId(), k -> {
-            Inventory newInv = Bukkit.createInventory(null, 27, inventoryName);
+            Inventory newInv = Bukkit.createInventory(null, 27, Utilis.color(inventoryName));
             PlayerStorage.loadWandInventory(player.getUniqueId(), newInv);
             return newInv;
         });

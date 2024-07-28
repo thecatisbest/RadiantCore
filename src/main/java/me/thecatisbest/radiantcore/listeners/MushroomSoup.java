@@ -9,6 +9,7 @@ import me.thecatisbest.radiantcore.utilis.ItemUtils;
 import me.thecatisbest.radiantcore.utilis.Utilis;
 import me.thecatisbest.radiantcore.utilis.builder.ItemBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,23 +31,20 @@ public class MushroomSoup implements Listener {
     private final HashMap<UUID, Boolean> isAFK = new HashMap<>();
     private final int magicDuration = ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION;
     private final int superMagicDuration = ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION;
-    private final ItemUtils itemUtils = RadiantCore.getInstance().getItemUtils();
-
-    private final ItemStack magic_mushroom_soup = itemUtils.magic_mushroom_soup().toItemStack();
-    private final ItemStack super_magic_mushroom_soup = itemUtils.super_magic_mushroom_soup().toItemStack();
 
     @EventHandler
     public void onPlayerUseSoup(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
         ItemStack item = event.getItem();
+        String metadataValue = ItemBuilder.getPersistentMetadata(item);
 
-        int maxFlyTimes = 24 * 60 * 60; // 一天的秒数
+        int maxFlyTimes = 3 * 24 * 60 * 60; // 三天的秒数
         int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
-        
-        if (item != null && (ItemBuilder.hasUniqueId(magic_mushroom_soup, ItemUtils.Key.MAGIC_MUSHROOM_SOUP)) ||
-                ItemBuilder.hasUniqueId(super_magic_mushroom_soup, ItemUtils.Key.SUPER_MAGIC_MUSHROOM_SOUP)) {
-            if ((isAFK.containsKey(playerId))){
+
+        if (item != null && metadataValue != null && metadataValue.equals(ItemUtils.Key.MAGIC_MUSHROOM_SOUP.getName()) ||
+                item != null && metadataValue != null && metadataValue.equals(ItemUtils.Key.SUPER_MAGIC_MUSHROOM_SOUP.getName())) {
+            if ((isAFK.containsKey(playerId))) {
                 player.sendMessage(Utilis.color("&c你不能在 AFK 狀態下使用蘑菇湯！"));
                 event.setCancelled(true);
                 return;
@@ -59,14 +57,12 @@ public class MushroomSoup implements Listener {
             return;
         }
 
-            if (item != null && ItemBuilder.hasUniqueId(magic_mushroom_soup, ItemUtils.Key.MAGIC_MUSHROOM_SOUP) &&
-                    (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-                handleSoupUse(player, playerId, item, magicDuration);
-                event.setCancelled(true);
+        if (item != null && metadataValue != null && metadataValue.equals(ItemUtils.Key.MAGIC_MUSHROOM_SOUP.getName()) && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+            handleSoupUse(player, playerId, item, magicDuration);
+            event.setCancelled(true);
         }
 
-        if (item != null && ItemBuilder.hasUniqueId(super_magic_mushroom_soup, ItemUtils.Key.SUPER_MAGIC_MUSHROOM_SOUP) &&
-                (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+        if (item != null && metadataValue != null && metadataValue.equals(ItemUtils.Key.SUPER_MAGIC_MUSHROOM_SOUP.getName()) && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             handleSoupUse(player, playerId, item, superMagicDuration);
             event.setCancelled(true);
         }
@@ -104,7 +100,7 @@ public class MushroomSoup implements Listener {
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
-        if (flyTimes.containsKey(playerId)) {
+        if (flyTimes.containsKey(playerId) || flyTimes.containsKey(playerId) && player.getGameMode() != GameMode.SURVIVAL) {
             player.setAllowFlight(true);
             player.setFlying(true);
         }

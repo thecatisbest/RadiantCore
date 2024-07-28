@@ -8,6 +8,7 @@ import me.thecatisbest.radiantcore.utilis.Utilis;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +22,11 @@ public class RadiantCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        if (sender instanceof Player player) {
+            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 80.0F, 1.0F);
+        }
+
         if (args.length == 0) {
             sender.sendMessage(" ");
             sender.sendMessage(Utilis.color("&6RadiantCore &7- &e指令列表"));
@@ -121,6 +127,10 @@ public class RadiantCommand implements TabExecutor {
                     player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().builders_wand().toItemStack());
                     player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
                     break;
+                case "GRAPPLING_HOOK":
+                    player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().grappling_hook().toItemStack());
+                    player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
+                    break;
                 default:
                     player.sendMessage(Utilis.color("&c無效的物品: &e" + itemType));
                     break;
@@ -165,31 +175,37 @@ public class RadiantCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         final List<String> toComplete = new ArrayList<>();
+        List<String> result = new ArrayList<>();
 
-        if (args.length == 1) {
-            toComplete.add("pluginslist");
-            toComplete.add("reload");
-            toComplete.add("getcustomitem");
-            toComplete.add("slimemap");
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("getcustomitem")) {
-            toComplete.add("MAGIC_MUSHROOM_SOUP");
-            toComplete.add("SUPER_MAGIC_MUSHROOM_SOUP");
-            toComplete.add("BUILDERS_WAND");
-            toComplete.add("GRAPPLING_HOOK");
+        if (sender instanceof Player player) {
+            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 80.0F, 1.0F);
         }
 
-        /*
-        switch (args.length){
+        switch (args.length) {
             case 1:
+                toComplete.add("pluginslist");
                 toComplete.add("reload");
-                toComplete.add("migrate");
-                break;
+                toComplete.add("getcustomitem");
+                toComplete.add("slimemap");
+                for (String a : toComplete) {
+                    if (a.toLowerCase().startsWith(args[0].toLowerCase()))
+                        result.add(a);
+                }
+                return result;
             case 2:
-                Bukkit.getOnlinePlayers().forEach(player -> toComplete.add(player.getDisplayName()));
-                break;
+                if (args[0].equalsIgnoreCase("getcustomitem")) {
+                    toComplete.add("MAGIC_MUSHROOM_SOUP");
+                    toComplete.add("SUPER_MAGIC_MUSHROOM_SOUP");
+                    toComplete.add("BUILDERS_WAND");
+                    toComplete.add("GRAPPLING_HOOK");
+                    for (String a : toComplete) {
+                        if (a.toLowerCase().startsWith(args[1].toLowerCase()))
+                            result.add(a);
+                    }
+                    return result;
+                }
         }
-         */
 
-        return toComplete;
+        return new ArrayList<>(); // null = online players
     }
 }

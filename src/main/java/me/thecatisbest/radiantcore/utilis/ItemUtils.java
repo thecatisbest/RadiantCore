@@ -37,13 +37,23 @@ public class ItemUtils {
         return builders_wand;
     }
 
+    public ItemBuilder grappling_hook() {
+        ItemBuilder grappling_hook = new ItemBuilder(Material.FISHING_ROD);
+        grappling_hook.setItemName(Utilis.color(ConfigValue.GRAPPLING_HOOK_NAME));
+        grappling_hook.setItemLore(Utilis.color(ConfigValue.GRAPPLING_HOOK_LORE));
+        grappling_hook.addUniqueId(Key.GRAPPLING_HOOK);
+
+        return grappling_hook;
+    }
+
     @Getter
     @RequiredArgsConstructor
     public enum Key {
 
-        MAGIC_MUSHROOM_SOUP("MAGIC_MUSHROOM_SOUP"),
-        SUPER_MAGIC_MUSHROOM_SOUP("SUPER_MAGIC_MUSHROOM_SOUP"),
-        BUILDERS_WAND("BUILDERS_WAND");
+        MAGIC_MUSHROOM_SOUP("magic_mushroom_soup"),
+        SUPER_MAGIC_MUSHROOM_SOUP("super_magic_mushroom_soup"),
+        BUILDERS_WAND("builders_wand"),
+        GRAPPLING_HOOK("grappling_hook");
         
         private final String name;
     }

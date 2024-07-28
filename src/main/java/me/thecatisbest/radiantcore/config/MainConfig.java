@@ -63,6 +63,10 @@ public class MainConfig {
         if (config.contains("Builders-Wand.lore"))
             ConfigValue.BUILDERS_WAND_LORE = config.getStringList("Builders-Wand.lore");
 
+        ConfigValue.GRAPPLING_HOOK_NAME = config.getString("Grappling-Hook.name");
+        if (config.contains("Grappling-Hook.lore"))
+            ConfigValue.GRAPPLING_HOOK_LORE = config.getStringList("Grappling-Hook.lore");
+
         // auto update file if newer version
         {
             CURRENT_CONFIG_VERSION = config.getString("file-version");
@@ -102,6 +106,9 @@ public class MainConfig {
 
         config.set("Builders-Wand.name", ConfigValue.BUILDERS_WAND_NAME);
         config.set("Builders-Wand.lore", ConfigValue.BUILDERS_WAND_LORE);
+
+        config.set("Grappling-Hook.name", ConfigValue.GRAPPLING_HOOK_NAME);
+        config.set("Grappling-Hook.lore", ConfigValue.GRAPPLING_HOOK_LORE);
 
         config.save(getFile());
     }
