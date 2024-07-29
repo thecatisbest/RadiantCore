@@ -14,10 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -100,7 +97,17 @@ public class MushroomSoup implements Listener {
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
-        if (flyTimes.containsKey(playerId) || flyTimes.containsKey(playerId) && player.getGameMode() != GameMode.SURVIVAL) {
+        if (flyTimes.containsKey(playerId)) {
+            player.setAllowFlight(true);
+            player.setFlying(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerGameModeChange(PlayerGameModeChangeEvent event) {
+        Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+        if (flyTimes.containsKey(playerId) && (event.getNewGameMode() == GameMode.SURVIVAL)) {
             player.setAllowFlight(true);
             player.setFlying(true);
         }

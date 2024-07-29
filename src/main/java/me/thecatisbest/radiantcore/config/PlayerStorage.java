@@ -61,8 +61,6 @@ public class PlayerStorage {
         return config.getInt(playerId.toString() + ".flightTime", 0);
     }
 
-
-
     public static void saveWandInventory(UUID playerId, Inventory inventory) {
         List<ItemStack> items = new ArrayList<>();
         for (ItemStack item : inventory.getContents()) {

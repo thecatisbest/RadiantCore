@@ -51,7 +51,7 @@ public class ItemBuilder {
     public ItemBuilder addUniqueId(String value) {
         ItemMeta meta = this.itemStack.getItemMeta();
         if (meta != null) {
-            NamespacedKey namespacedKey = new NamespacedKey(RadiantCore.getInstance(), "unique_id");
+            NamespacedKey namespacedKey = new NamespacedKey(RadiantCore.getInstance(), "item_id");
             meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.STRING, value);
             this.itemStack.setItemMeta(meta);
         }
@@ -67,7 +67,7 @@ public class ItemBuilder {
             return null;
         }
         ItemMeta meta = item.getItemMeta();
-        NamespacedKey namespacedKey = new NamespacedKey(RadiantCore.getInstance(), "unique_id");
+        NamespacedKey namespacedKey = new NamespacedKey(RadiantCore.getInstance(), "item_id");
         return meta.getPersistentDataContainer().get(namespacedKey, PersistentDataType.STRING);
     }
 

@@ -22,11 +22,6 @@ public class RadiantCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
-        if (sender instanceof Player player) {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 80.0F, 1.0F);
-        }
-
         if (args.length == 0) {
             sender.sendMessage(" ");
             sender.sendMessage(Utilis.color("&6RadiantCore &7- &e指令列表"));
@@ -178,7 +173,7 @@ public class RadiantCommand implements TabExecutor {
         List<String> result = new ArrayList<>();
 
         if (sender instanceof Player player) {
-            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 80.0F, 1.0F);
+            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 80.0F, 1.0F);
         }
 
         switch (args.length) {

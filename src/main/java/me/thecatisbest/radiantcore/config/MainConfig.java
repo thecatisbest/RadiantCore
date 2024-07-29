@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.List;
 
 public class MainConfig {
 
@@ -29,7 +30,7 @@ public class MainConfig {
     public static void loadUnchecked() throws Exception {
         final File file = getFile();
 
-        if (!file.exists()) {
+        if (!file.exists() || file.length() == 0) {
             save();
             return;
         }
@@ -44,37 +45,31 @@ public class MainConfig {
         }
 
         // read it
-        ConfigValue.COMMANDS = config.getString("commands");
-        ConfigValue.SWAP = config.getBoolean("cancel_swap");
+        ConfigValue.COMMANDS = getString(config, "commands", ConfigValue.COMMANDS);
+        ConfigValue.SWAP = getBoolean(config, "cancel_swap", ConfigValue.SWAP);
 
-        ConfigValue.MAGIC_MUSHROOM_SOUP_NAME = config.getString("Magic-Mushroom-Soup.name");
-        if (config.contains("Magic-Mushroom-Soup.lore"))
-            ConfigValue.MAGIC_MUSHROOM_SOUP_LORE = config.getStringList("Magic-Mushroom-Soup.lore");
-        ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION = config.getInt("Magic-Mushroom-Soup.duration");
-        ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE = config.getString("Magic-Mushroom-Soup.texture");
+        ConfigValue.MAGIC_MUSHROOM_SOUP_NAME = getString(config, "Magic-Mushroom-Soup.name", ConfigValue.MAGIC_MUSHROOM_SOUP_NAME);
+        ConfigValue.MAGIC_MUSHROOM_SOUP_LORE = getStringList(config, "Magic-Mushroom-Soup.lore", ConfigValue.MAGIC_MUSHROOM_SOUP_LORE);
+        ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION = getInt(config, "Magic-Mushroom-Soup.duration", ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION);
+        ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE = getString(config, "Magic-Mushroom-Soup.texture", ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE);
 
-        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME = config.getString("Super-Magic-Mushroom-Soup.name");
-        if (config.contains("Super-Magic-Mushroom-Soup.lore"))
-            ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE = config.getStringList("Super-Magic-Mushroom-Soup.lore");
-        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION = config.getInt("Super-Magic-Mushroom-Soup.duration");
-        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE = config.getString("Super-Magic-Mushroom-Soup.texture");
+        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME = getString(config, "Super-Magic-Mushroom-Soup.name", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME);
+        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE = getStringList(config, "Super-Magic-Mushroom-Soup.lore", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE);
+        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION = getInt(config, "Super-Magic-Mushroom-Soup.duration", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION);
+        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE = getString(config, "Super-Magic-Mushroom-Soup.texture", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE);
 
-        ConfigValue.BUILDERS_WAND_NAME = config.getString("Builders-Wand.name");
-        if (config.contains("Builders-Wand.lore"))
-            ConfigValue.BUILDERS_WAND_LORE = config.getStringList("Builders-Wand.lore");
+        ConfigValue.BUILDERS_WAND_NAME = getString(config, "Builders-Wand.name", ConfigValue.BUILDERS_WAND_NAME);
+        ConfigValue.BUILDERS_WAND_LORE = getStringList(config, "Builders-Wand.lore", ConfigValue.BUILDERS_WAND_LORE);
 
-        ConfigValue.GRAPPLING_HOOK_NAME = config.getString("Grappling-Hook.name");
-        if (config.contains("Grappling-Hook.lore"))
-            ConfigValue.GRAPPLING_HOOK_LORE = config.getStringList("Grappling-Hook.lore");
+        ConfigValue.GRAPPLING_HOOK_NAME = getString(config, "Grappling-Hook.name", ConfigValue.GRAPPLING_HOOK_NAME);
+        ConfigValue.GRAPPLING_HOOK_LORE = getStringList(config, "Grappling-Hook.lore", ConfigValue.GRAPPLING_HOOK_LORE);
 
         // auto update file if newer version
-        {
-            CURRENT_CONFIG_VERSION = config.getString("file-version");
+        CURRENT_CONFIG_VERSION = config.getString("file-version");
 
-            if (CURRENT_CONFIG_VERSION == null || !CURRENT_CONFIG_VERSION.equals(PLUGIN_VERSION)) {
-                loadOldConfigs(config);
-                save();
-            }
+        if (CURRENT_CONFIG_VERSION == null || !CURRENT_CONFIG_VERSION.equals(PLUGIN_VERSION)) {
+            loadOldConfigs(config);
+            save();
         }
     }
 
@@ -115,5 +110,21 @@ public class MainConfig {
 
     public static void loadOldConfigs(FileConfiguration config) {
         // Nothing here yet :)
+    }
+
+    private static String getString(FileConfiguration config, String path, String defaultValue) {
+        return config.contains(path) ? config.getString(path) : defaultValue;
+    }
+
+    private static boolean getBoolean(FileConfiguration config, String path, boolean defaultValue) {
+        return config.contains(path) ? config.getBoolean(path) : defaultValue;
+    }
+
+    private static int getInt(FileConfiguration config, String path, int defaultValue) {
+        return config.contains(path) ? config.getInt(path) : defaultValue;
+    }
+
+    private static List<String> getStringList(FileConfiguration config, String path, List<String> defaultValue) {
+        return config.contains(path) ? config.getStringList(path) : defaultValue;
     }
 }
