@@ -9,7 +9,7 @@ import me.thecatisbest.radiantcore.utilis.ItemUtils;
 import me.thecatisbest.radiantcore.utilis.Utilis;
 import me.thecatisbest.radiantcore.utilis.builder.ItemBuilder;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,6 +41,13 @@ public class MushroomSoup implements Listener {
 
         if (item != null && metadataValue != null && metadataValue.equals(ItemUtils.Key.MAGIC_MUSHROOM_SOUP.getName()) ||
                 item != null && metadataValue != null && metadataValue.equals(ItemUtils.Key.SUPER_MAGIC_MUSHROOM_SOUP.getName())) {
+
+            if (!isWorldAllowed(player.getWorld())) {
+                player.sendMessage(Utilis.color("&c你不能在這個世界使用蘑菇湯！"));
+                event.setCancelled(true);
+                return;
+            }
+
             if ((isAFK.containsKey(playerId))) {
                 player.sendMessage(Utilis.color("&c你不能在 AFK 狀態下使用蘑菇湯！"));
                 event.setCancelled(true);
@@ -49,7 +56,7 @@ public class MushroomSoup implements Listener {
         }
 
         if (flyTimes.getOrDefault(playerId, savedTime) > maxFlyTimes) {
-            player.sendMessage(Utilis.color("&c你無法再延長飛行時間，因為已經達到最大效果時間 (一天)！"));
+            player.sendMessage(Utilis.color("&c你無法再延長飛行時間，因為已經達到最大效果時間 (三天)！"));
             event.setCancelled(true);
             return;
         }
@@ -71,12 +78,11 @@ public class MushroomSoup implements Listener {
         UUID playerId = player.getUniqueId();
 
         if (flyTimes.containsKey(playerId)) {
-            int timeLeft = flyTimes.getOrDefault(playerId, 0);
-            RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
             if (tasks.containsKey(playerId)) {
                 Bukkit.getScheduler().cancelTask(tasks.get(playerId));
                 tasks.remove(playerId);
             }
+            flyTimes.remove(playerId);
         }
         isAFK.remove(playerId);
     }
@@ -89,7 +95,9 @@ public class MushroomSoup implements Listener {
         int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
         if (savedTime > 0) {
             flyTimes.put(playerId, savedTime);
-            startFlying(player);
+            if (isWorldAllowed(player.getWorld())) {
+                startFlying(player);
+            }
         }
     }
 
@@ -98,8 +106,29 @@ public class MushroomSoup implements Listener {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
         if (flyTimes.containsKey(playerId)) {
-            player.setAllowFlight(true);
-            player.setFlying(true);
+            if (isWorldAllowed(player.getWorld())) {
+                if (tasks.containsKey(playerId)) {
+                    player.setAllowFlight(true);
+                    player.setFlying(true);
+                } else {
+                    int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
+                    if (savedTime > 0) {
+                        flyTimes.put(playerId, savedTime);
+                        startFlying(player);
+                    }
+                }
+            } else {
+                player.setAllowFlight(false);
+                player.setFlying(false);
+
+                int timeLeft = flyTimes.getOrDefault(playerId, 0);
+                RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
+
+                if (tasks.containsKey(playerId)) {
+                    Bukkit.getScheduler().cancelTask(tasks.get(playerId));
+                    tasks.remove(playerId);
+                }
+            }
         }
     }
 
@@ -107,7 +136,7 @@ public class MushroomSoup implements Listener {
     public void onPlayerGameModeChange(PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
-        if (flyTimes.containsKey(playerId) && (event.getNewGameMode() == GameMode.SURVIVAL)) {
+        if (flyTimes.containsKey(playerId) && isWorldAllowed(player.getWorld())) {
             player.setAllowFlight(true);
             player.setFlying(true);
         }
@@ -198,5 +227,18 @@ public class MushroomSoup implements Listener {
 
         // 消耗掉蘑菇汤
         item.setAmount(item.getAmount() - 1);
+    }
+
+    private boolean isWorldAllowed(World world) {
+        String worldName = world.getName();
+        switch (ConfigValue.MUSHROOM_SOUP_WORLD_TYPE_MODE.toUpperCase()) {
+            case "BLACKLIST":
+                return !ConfigValue.MUSHROOM_SOUP_WORLD_TYPE.contains(worldName);
+            case "WHITELIST":
+                return ConfigValue.MUSHROOM_SOUP_WORLD_TYPE.contains(worldName);
+            case "DISABLED":
+            default:
+                return true;
+        }
     }
 }

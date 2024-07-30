@@ -48,21 +48,30 @@ public class MainConfig {
         ConfigValue.COMMANDS = getString(config, "commands", ConfigValue.COMMANDS);
         ConfigValue.SWAP = getBoolean(config, "cancel_swap", ConfigValue.SWAP);
 
-        ConfigValue.MAGIC_MUSHROOM_SOUP_NAME = getString(config, "Magic-Mushroom-Soup.name", ConfigValue.MAGIC_MUSHROOM_SOUP_NAME);
-        ConfigValue.MAGIC_MUSHROOM_SOUP_LORE = getStringList(config, "Magic-Mushroom-Soup.lore", ConfigValue.MAGIC_MUSHROOM_SOUP_LORE);
-        ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION = getInt(config, "Magic-Mushroom-Soup.duration", ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION);
-        ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE = getString(config, "Magic-Mushroom-Soup.texture", ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE);
+        ConfigValue.MUSHROOM_SOUP_WORLD_TYPE_MODE = getString(config, "Mushroom-Soup.world-type-mode", ConfigValue.MUSHROOM_SOUP_WORLD_TYPE_MODE);
+        ConfigValue.MUSHROOM_SOUP_WORLD_TYPE = getStringList(config, "Mushroom-Soup.world-type", ConfigValue.MUSHROOM_SOUP_WORLD_TYPE);
 
-        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME = getString(config, "Super-Magic-Mushroom-Soup.name", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME);
-        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE = getStringList(config, "Super-Magic-Mushroom-Soup.lore", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE);
-        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION = getInt(config, "Super-Magic-Mushroom-Soup.duration", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION);
-        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE = getString(config, "Super-Magic-Mushroom-Soup.texture", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE);
+        ConfigValue.MAGIC_MUSHROOM_SOUP_NAME = getString(config, "Mushroom-Soup.Magic-Mushroom-Soup.name", ConfigValue.MAGIC_MUSHROOM_SOUP_NAME);
+        ConfigValue.MAGIC_MUSHROOM_SOUP_LORE = getStringList(config, "Mushroom-Soup.Magic-Mushroom-Soup.lore", ConfigValue.MAGIC_MUSHROOM_SOUP_LORE);
+        ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION = getInt(config, "Mushroom-Soup.Magic-Mushroom-Soup.duration", ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION);
+        ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE = getString(config, "Mushroom-Soup.Magic-Mushroom-Soup.texture", ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE);
 
-        ConfigValue.BUILDERS_WAND_NAME = getString(config, "Builders-Wand.name", ConfigValue.BUILDERS_WAND_NAME);
-        ConfigValue.BUILDERS_WAND_LORE = getStringList(config, "Builders-Wand.lore", ConfigValue.BUILDERS_WAND_LORE);
+        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME = getString(config, "Mushroom-Soup.Super-Magic-Mushroom-Soup.name", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME);
+        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE = getStringList(config, "Mushroom-Soup.Super-Magic-Mushroom-Soup.lore", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE);
+        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION = getInt(config, "Mushroom-Soup.Super-Magic-Mushroom-Soup.duration", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION);
+        ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE = getString(config, "Mushroom-Soup.Super-Magic-Mushroom-Soup.texture", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE);
 
-        ConfigValue.GRAPPLING_HOOK_NAME = getString(config, "Grappling-Hook.name", ConfigValue.GRAPPLING_HOOK_NAME);
-        ConfigValue.GRAPPLING_HOOK_LORE = getStringList(config, "Grappling-Hook.lore", ConfigValue.GRAPPLING_HOOK_LORE);
+        ConfigValue.BUILDERS_WAND_WORLD_TYPE_MODE = getString(config, "Builders-Wand.world-type-mode", ConfigValue.BUILDERS_WAND_WORLD_TYPE_MODE);
+        ConfigValue.BUILDERS_WAND_WORLD_TYPE = getStringList(config, "Builders-Wand.world-type", ConfigValue.BUILDERS_WAND_WORLD_TYPE);
+
+        ConfigValue.BUILDERS_WAND_NAME = getString(config, "Builders-Wand.Builders-Wand.name", ConfigValue.BUILDERS_WAND_NAME);
+        ConfigValue.BUILDERS_WAND_LORE = getStringList(config, "Builders-Wand.Builders-Wand.lore", ConfigValue.BUILDERS_WAND_LORE);
+
+        ConfigValue.GRAPPLING_HOOK_WORLD_TYPE_MODE = getString(config, "Grappling-Hook.world-type-mode", ConfigValue.GRAPPLING_HOOK_WORLD_TYPE_MODE);
+        ConfigValue.GRAPPLING_HOOK_WORLD_TYPE = getStringList(config, "Grappling-Hook.world-type", ConfigValue.GRAPPLING_HOOK_WORLD_TYPE);
+
+        ConfigValue.GRAPPLING_HOOK_NAME = getString(config, "Grappling-Hook.Grappling-Hook.name", ConfigValue.GRAPPLING_HOOK_NAME);
+        ConfigValue.GRAPPLING_HOOK_LORE = getStringList(config, "Grappling-Hook.Grappling-Hook.lore", ConfigValue.GRAPPLING_HOOK_LORE);
 
         // auto update file if newer version
         CURRENT_CONFIG_VERSION = config.getString("file-version");
@@ -89,21 +98,45 @@ public class MainConfig {
 
         config.addEmptyLine();
 
-        config.set("Magic-Mushroom-Soup.name", ConfigValue.MAGIC_MUSHROOM_SOUP_NAME);
-        config.set("Magic-Mushroom-Soup.lore", ConfigValue.MAGIC_MUSHROOM_SOUP_LORE);
-        config.set("Magic-Mushroom-Soup.duration", ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION);
-        config.set("Magic-Mushroom-Soup.texture", ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE);
+        config.addComment("You may choose between:");
+        config.addComment("  - DISABLED: The config has no effect");
+        config.addComment("  - BLACKLIST: All worlds, apart from these, will be permitted");
+        config.addComment("  - WHITELIST: Only the specified worlds will be permitted");
 
-        config.set("Super-Magic-Mushroom-Soup.name", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME);
-        config.set("Super-Magic-Mushroom-Soup.lore", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE);
-        config.set("Super-Magic-Mushroom-Soup.duration", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION);
-        config.set("Super-Magic-Mushroom-Soup.texture", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE);
+        config.set("Mushroom-Soup.world-type-mode", ConfigValue.MUSHROOM_SOUP_WORLD_TYPE_MODE);
+        config.set("Mushroom-Soup.world-type", ConfigValue.MUSHROOM_SOUP_WORLD_TYPE);
 
-        config.set("Builders-Wand.name", ConfigValue.BUILDERS_WAND_NAME);
-        config.set("Builders-Wand.lore", ConfigValue.BUILDERS_WAND_LORE);
+        config.set("Mushroom-Soup.Magic-Mushroom-Soup.name", ConfigValue.MAGIC_MUSHROOM_SOUP_NAME);
+        config.set("Mushroom-Soup.Magic-Mushroom-Soup.lore", ConfigValue.MAGIC_MUSHROOM_SOUP_LORE);
+        config.set("Mushroom-Soup.Magic-Mushroom-Soup.duration", ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION);
+        config.set("Mushroom-Soup.Magic-Mushroom-Soup.texture", ConfigValue.MAGIC_MUSHROOM_SOUP_TEXTURE);
 
-        config.set("Grappling-Hook.name", ConfigValue.GRAPPLING_HOOK_NAME);
-        config.set("Grappling-Hook.lore", ConfigValue.GRAPPLING_HOOK_LORE);
+        config.set("Mushroom-Soup.Super-Magic-Mushroom-Soup.name", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_NAME);
+        config.set("Mushroom-Soup.Super-Magic-Mushroom-Soup.lore", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_LORE);
+        config.set("Mushroom-Soup.Super-Magic-Mushroom-Soup.duration", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION);
+        config.set("Mushroom-Soup.Super-Magic-Mushroom-Soup.texture", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE);
+
+        config.addComment("You may choose between:");
+        config.addComment("  - DISABLED: The config has no effect");
+        config.addComment("  - BLACKLIST: All worlds, apart from these, will be permitted");
+        config.addComment("  - WHITELIST: Only the specified worlds will be permitted");
+
+        config.set("Builders-Wand.world-type-mode", ConfigValue.BUILDERS_WAND_WORLD_TYPE_MODE);
+        config.set("Builders-Wand.world-type", ConfigValue.BUILDERS_WAND_WORLD_TYPE);
+
+        config.set("Builders-Wand.Builders-Wand.name", ConfigValue.BUILDERS_WAND_NAME);
+        config.set("Builders-Wand.Builders-Wand.lore", ConfigValue.BUILDERS_WAND_LORE);
+
+        config.addComment("You may choose between:");
+        config.addComment("  - DISABLED: The config has no effect");
+        config.addComment("  - BLACKLIST: All worlds, apart from these, will be permitted");
+        config.addComment("  - WHITELIST: Only the specified worlds will be permitted");
+
+        config.set("Grappling-Hook.world-type-mode", ConfigValue.GRAPPLING_HOOK_WORLD_TYPE_MODE);
+        config.set("Grappling-Hook.world-type", ConfigValue.GRAPPLING_HOOK_WORLD_TYPE);
+
+        config.set("Grappling-Hook.Grappling-Hook.name", ConfigValue.GRAPPLING_HOOK_NAME);
+        config.set("Grappling-Hook.Grappling-Hook.lore", ConfigValue.GRAPPLING_HOOK_LORE);
 
         config.save(getFile());
     }

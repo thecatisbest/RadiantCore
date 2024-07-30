@@ -59,8 +59,8 @@ public class BuildersWand implements Listener {
                 event.setCancelled(true);
                 openWandInventory(player);
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                if (player.getGameMode() == GameMode.ADVENTURE) {
-                    player.sendMessage(Utilis.color("&c你無法在這裡使用建造者魔杖！"));
+                if (!isWorldAllowed(player.getWorld())) {
+                    player.sendMessage(Utilis.color("&c你不能在這個世界使用建造者魔杖！"));
                     return;
                 }
                 Bukkit.getScheduler().scheduleSyncDelayedTask(RadiantCore.getInstance(),
@@ -256,6 +256,19 @@ public class BuildersWand implements Listener {
     public static void saveAllInventories() {
         for (Map.Entry<UUID, Inventory> entry : wandInventories.entrySet()) {
             PlayerStorage.saveWandInventory(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private boolean isWorldAllowed(World world) {
+        String worldName = world.getName();
+        switch (ConfigValue.BUILDERS_WAND_WORLD_TYPE_MODE.toUpperCase()) {
+            case "BLACKLIST":
+                return !ConfigValue.BUILDERS_WAND_WORLD_TYPE.contains(worldName);
+            case "WHITELIST":
+                return ConfigValue.BUILDERS_WAND_WORLD_TYPE.contains(worldName);
+            case "DISABLED":
+            default:
+                return true;
         }
     }
 }
