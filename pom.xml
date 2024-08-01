@@ -118,11 +118,10 @@
           <scope>provided</scope>
       </dependency>
       <dependency>
-          <groupId>com.github.Zrips</groupId>
-          <artifactId>CMIAPI</artifactId>
-          <version>9.7.4.1</version>
-          <scope>system</scope>
-          <systemPath>${basedir}/libs/CMIAPI-9.7.4.1.jar</systemPath>
+          <groupId>net.lapismc</groupId>
+          <artifactId>AFKPlus</artifactId>
+          <version>3.4.1</version>
+          <scope>provided</scope>
       </dependency>
       <dependency>
           <groupId>net.kyori</groupId>

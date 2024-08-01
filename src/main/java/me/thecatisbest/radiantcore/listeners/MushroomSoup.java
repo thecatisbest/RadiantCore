@@ -1,13 +1,14 @@
 package me.thecatisbest.radiantcore.listeners;
 
-import com.Zrips.CMI.events.CMIAfkEnterEvent;
-import com.Zrips.CMI.events.CMIAfkLeaveEvent;
 import com.cryptomorin.xseries.XSound;
 import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.config.ConfigValue;
 import me.thecatisbest.radiantcore.utilis.ItemUtils;
 import me.thecatisbest.radiantcore.utilis.Utilis;
 import me.thecatisbest.radiantcore.utilis.builder.ItemBuilder;
+import net.lapismc.afkplus.api.AFKStartEvent;
+import net.lapismc.afkplus.api.AFKStopEvent;
+import net.lapismc.afkplus.playerdata.AFKPlusPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -105,47 +106,39 @@ public class MushroomSoup implements Listener {
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
-        if (flyTimes.containsKey(playerId)) {
-            if (isWorldAllowed(player.getWorld())) {
-                if (tasks.containsKey(playerId)) {
-                    player.setAllowFlight(true);
-                    player.setFlying(true);
+        Bukkit.getScheduler().runTaskLater(RadiantCore.getInstance(), () -> {
+            if (flyTimes.containsKey(playerId)) {
+                if (isWorldAllowed(player.getWorld())) {
+                    if (tasks.containsKey(playerId)) {
+                        player.setAllowFlight(true);
+                        player.setFlying(true);
+                    } else {
+                        int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
+                        if (savedTime > 0) {
+                            flyTimes.put(playerId, savedTime);
+                            startFlying(player);
+                        }
+                    }
                 } else {
-                    int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
-                    if (savedTime > 0) {
-                        flyTimes.put(playerId, savedTime);
-                        startFlying(player);
+                    player.setAllowFlight(false);
+                    player.setFlying(false);
+
+                    int timeLeft = flyTimes.getOrDefault(playerId, 0);
+                    RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
+
+                    if (tasks.containsKey(playerId)) {
+                        Bukkit.getScheduler().cancelTask(tasks.get(playerId));
+                        tasks.remove(playerId);
                     }
                 }
-            } else {
-                player.setAllowFlight(false);
-                player.setFlying(false);
-
-                int timeLeft = flyTimes.getOrDefault(playerId, 0);
-                RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, timeLeft); // 保存到文件
-
-                if (tasks.containsKey(playerId)) {
-                    Bukkit.getScheduler().cancelTask(tasks.get(playerId));
-                    tasks.remove(playerId);
-                }
             }
-        }
+        }, 20L);
     }
 
     @EventHandler
-    public void onPlayerGameModeChange(PlayerGameModeChangeEvent event) {
-        Player player = event.getPlayer();
-        UUID playerId = player.getUniqueId();
-        if (flyTimes.containsKey(playerId) && isWorldAllowed(player.getWorld())) {
-            player.setAllowFlight(true);
-            player.setFlying(true);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerAFK(CMIAfkEnterEvent event) {
-        Player player = event.getPlayer();
-        UUID playerId = player.getUniqueId();
+    public void onPlayerAFK(AFKStartEvent event) {
+        AFKPlusPlayer player = event.getPlayer();
+        UUID playerId = player.getUUID();
         if (tasks.containsKey(playerId)) {
             Bukkit.getScheduler().cancelTask(tasks.get(playerId));
             tasks.remove(playerId);
@@ -154,16 +147,21 @@ public class MushroomSoup implements Listener {
     }
 
     @EventHandler
-    public void onPlayerLeaveAFK(CMIAfkLeaveEvent event) {
-        Player player = event.getPlayer();
-        UUID playerId = player.getUniqueId();
+    public void onPlayerLeaveAFK(AFKStopEvent event) {
+        AFKPlusPlayer afkPlayer = event.getPlayer();
+        Player player = Bukkit.getPlayer(afkPlayer.getUUID());
+        if (player != null) {
+            UUID playerId = player.getUniqueId();
 
-        int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
-        if (savedTime > 0) {
-            flyTimes.put(playerId, savedTime);
-            startFlying(player);
+            int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
+            if (savedTime > 0) {
+                flyTimes.put(playerId, savedTime);
+                if (isWorldAllowed(player.getWorld())) {
+                    startFlying(player);
+                }
+            }
+            isAFK.remove(playerId);
         }
-        isAFK.remove(playerId);
     }
 
     private void startFlying(Player player) {
