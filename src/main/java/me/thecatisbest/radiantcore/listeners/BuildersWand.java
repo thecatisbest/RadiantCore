@@ -40,7 +40,8 @@ public class BuildersWand implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (wandInventories.containsValue(event.getInventory())) {
             ItemStack currentItem = event.getCurrentItem();
-            if (currentItem != null && !currentItem.getType().isBlock() && currentItem.getType() == Material.PLAYER_HEAD) {
+            if (currentItem != null &&
+                    (!currentItem.getType().isBlock() || currentItem.getType() == Material.PLAYER_HEAD)) {
                 event.setCancelled(true);
                 event.getWhoClicked().sendMessage(Utilis.color("&c你只能將方塊放進儲存庫！"));
             }
