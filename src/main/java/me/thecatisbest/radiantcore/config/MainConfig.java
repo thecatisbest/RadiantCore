@@ -61,6 +61,8 @@ public class MainConfig {
         ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION = getInt(config, "Mushroom-Soup.Super-Magic-Mushroom-Soup.duration", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION);
         ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE = getString(config, "Mushroom-Soup.Super-Magic-Mushroom-Soup.texture", ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE);
 
+        ConfigValue.BUILDERS_WAND_PUT_WITHOUT_BLOCK = getBoolean(config, "Builders-Wand.putWithoutBlock", ConfigValue.BUILDERS_WAND_PUT_WITHOUT_BLOCK);
+
         ConfigValue.BUILDERS_WAND_WORLD_TYPE_MODE = getString(config, "Builders-Wand.world-type-mode", ConfigValue.BUILDERS_WAND_WORLD_TYPE_MODE);
         ConfigValue.BUILDERS_WAND_WORLD_TYPE = getStringList(config, "Builders-Wand.world-type", ConfigValue.BUILDERS_WAND_WORLD_TYPE);
 
@@ -120,6 +122,8 @@ public class MainConfig {
         config.addComment("  - DISABLED: The config has no effect");
         config.addComment("  - BLACKLIST: All worlds, apart from these, will be permitted");
         config.addComment("  - WHITELIST: Only the specified worlds will be permitted");
+
+        config.set("Builders-Wand.putWithoutBlock", ConfigValue.BUILDERS_WAND_PUT_WITHOUT_BLOCK);
 
         config.set("Builders-Wand.world-type-mode", ConfigValue.BUILDERS_WAND_WORLD_TYPE_MODE);
         config.set("Builders-Wand.world-type", ConfigValue.BUILDERS_WAND_WORLD_TYPE);

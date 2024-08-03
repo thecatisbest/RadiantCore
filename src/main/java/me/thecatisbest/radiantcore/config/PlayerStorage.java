@@ -44,7 +44,7 @@ public class PlayerStorage {
         config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public void saveConfig() {
+    public static void saveConfig() {
         try {
             config.save(file);
             BuildersWand.saveAllInventories();
@@ -117,7 +117,7 @@ public class PlayerStorage {
 
     public void startAutoSaveTask() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin,
-                this::saveConfig, 0L, 6000L); // 1200 ticks = 60 seconds
+                PlayerStorage::saveConfig, 0L, 6000L); // 1200 ticks = 60 seconds
     }
 }
 

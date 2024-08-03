@@ -2,23 +2,23 @@ package me.thecatisbest.radiantcore.commands;
 
 import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.config.LoadConfigs;
+import me.thecatisbest.radiantcore.config.PlayerStorage;
 import me.thecatisbest.radiantcore.listeners.BuildersWand;
 import me.thecatisbest.radiantcore.listeners.SlimeMap;
 import me.thecatisbest.radiantcore.utilis.Utilis;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class RadiantCommand implements TabExecutor {
+
+    public static final Map<UUID, Boolean> isWandUsingCMD = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -94,6 +94,36 @@ public class RadiantCommand implements TabExecutor {
                 return true;
             }
         }
+        if (args.length == 2 && args[0].equalsIgnoreCase("openwandinv")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("你不能在控制台裡輸入這個指令");
+                return true;
+            }
+
+            Player player = (Player) sender;
+            OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+
+            if (!player.hasPermission("radiant.command.openwandinv")) {
+                player.sendMessage(Utilis.color("&c你沒有權限使用這個指令！"));
+                return true;
+            }
+
+            if (!target.hasPlayedBefore() && !target.isOnline()) {
+                player.sendMessage(Utilis.color("&c找不到該玩家!"));
+                return true;
+            }
+
+            if (target.isOnline()) {
+                player.sendMessage(Utilis.color("&e你正在打開 &6" + target.getName() + " &e的魔杖庫存 (&aOnline&e)"));
+            } else {
+                player.sendMessage(Utilis.color("&e你正在打開 &6" + target.getName() + " &e的魔杖庫存 (&cOffline&e)"));
+            }
+
+            openWandInventory(target, player);
+            return true;
+
+        }
+
         if (args.length == 2 && args[0].equalsIgnoreCase("getcustomitem")) {
 
             if (!(sender instanceof Player)) {
@@ -182,12 +212,24 @@ public class RadiantCommand implements TabExecutor {
                 toComplete.add("reload");
                 toComplete.add("getcustomitem");
                 toComplete.add("slimemap");
+                toComplete.add("openwandinv");
+                toComplete.add("restorewand");
                 for (String a : toComplete) {
                     if (a.toLowerCase().startsWith(args[0].toLowerCase()))
                         result.add(a);
                 }
                 return result;
             case 2:
+                if (args[0].equalsIgnoreCase("openwandinv")) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        toComplete.add(player.getName());
+                    }
+                    for (String a : toComplete) {
+                        if (a.toLowerCase().startsWith(args[1].toLowerCase()))
+                            result.add(a);
+                    }
+                    return result;
+                }
                 if (args[0].equalsIgnoreCase("getcustomitem")) {
                     toComplete.add("MAGIC_MUSHROOM_SOUP");
                     toComplete.add("SUPER_MAGIC_MUSHROOM_SOUP");
@@ -202,5 +244,15 @@ public class RadiantCommand implements TabExecutor {
         }
 
         return new ArrayList<>(); // null = online players
+    }
+
+    private void openWandInventory(OfflinePlayer target, Player viewer) {
+        Inventory inv = BuildersWand.wandInventories.computeIfAbsent(target.getUniqueId(), k -> {
+            Inventory newInv = Bukkit.createInventory(null, 27, Utilis.color("&8" + target.getName() + " 的魔杖庫存"));
+            PlayerStorage.loadWandInventory(target.getUniqueId(), newInv);
+            return newInv;
+        });
+        viewer.openInventory(inv);
+        isWandUsingCMD.put(viewer.getUniqueId(), true);
     }
 }

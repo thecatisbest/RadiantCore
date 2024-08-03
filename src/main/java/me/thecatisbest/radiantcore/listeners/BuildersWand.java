@@ -1,6 +1,7 @@
 package me.thecatisbest.radiantcore.listeners;
 
 import me.thecatisbest.radiantcore.RadiantCore;
+import me.thecatisbest.radiantcore.commands.RadiantCommand;
 import me.thecatisbest.radiantcore.config.ConfigValue;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
 import me.thecatisbest.radiantcore.utilis.ItemUtils;
@@ -33,17 +34,21 @@ public class BuildersWand implements Listener {
 
     private final ItemUtils itemUtils = RadiantCore.getInstance().getItemUtils();
     private static final Map<Player, List<BlockState>> wandOops = new HashMap<>();
-    private static final Map<UUID, Inventory> wandInventories = new HashMap<>();
+    public static final Map<UUID, Inventory> wandInventories = new HashMap<>();
     private static final String inventoryName = ConfigValue.BUILDERS_WAND_NAME;
+    private final HashMap<UUID, Long> cooldowns = new HashMap<>();
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
         if (wandInventories.containsValue(event.getInventory())) {
             ItemStack currentItem = event.getCurrentItem();
-            if (currentItem != null &&
+            if (ConfigValue.BUILDERS_WAND_PUT_WITHOUT_BLOCK.equals(false) && currentItem != null &&
                     (!currentItem.getType().isBlock() || currentItem.getType() == Material.PLAYER_HEAD)) {
-                event.setCancelled(true);
-                event.getWhoClicked().sendMessage(Utilis.color("&c你只能將方塊放進儲存庫！"));
+                if (!RadiantCommand.isWandUsingCMD.containsKey(player.getUniqueId())) {
+                    event.setCancelled(true);
+                    event.getWhoClicked().sendMessage(Utilis.color("&c你只能將方塊放進儲存庫！"));
+                }
             }
         }
     }
@@ -60,10 +65,17 @@ public class BuildersWand implements Listener {
                 event.setCancelled(true);
                 openWandInventory(player);
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                if (!isWorldAllowed(player.getWorld())) {
-                    player.sendMessage(Utilis.color("&c你不能在這個世界使用建造者魔杖！"));
+                long currentTime = System.currentTimeMillis();
+                long lastUsed = cooldowns.getOrDefault(player.getUniqueId(), 0L);
+                if (!isWorldAllowed(player.getWorld()))
                     return;
-                }
+                // 1 second = 1000
+                if (currentTime - lastUsed < 500)
+                    return;
+
+                cooldowns.put(player.getUniqueId(), currentTime);
+                Bukkit.getScheduler().runTaskLater(RadiantCore.getInstance(), () -> cooldowns.remove(player.getUniqueId()), 8);
+
                 Bukkit.getScheduler().scheduleSyncDelayedTask(RadiantCore.getInstance(),
                         () -> fillConnectedFaces(player, block, event.getBlockFace(), this.itemUtils.builders_wand().toItemStack())
                         , 1);
@@ -78,6 +90,8 @@ public class BuildersWand implements Listener {
             Inventory inventory = getWandInventory(player);
             if (inventory != null) {
                 PlayerStorage.saveWandInventory(player.getUniqueId(), inventory);
+                RadiantCommand.isWandUsingCMD.remove(player.getUniqueId());
+                wandInventories.remove(player.getUniqueId());
             }
         }
     }

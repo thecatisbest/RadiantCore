@@ -34,6 +34,8 @@ public class ConfigValue {
     public static Integer SUPER_MAGIC_MUSHROOM_SOUP_DURATION = 3600;
     public static String SUPER_MAGIC_MUSHROOM_SOUP_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFlNWQwYzIzZWMxYTFmODEzYzBjNjNmMTEyZTU1YjdiMWM4N2ZlY2QzMjY5YzBmZGJjZTk2ZDAzYjU1OGMwOCJ9fX0=";
     // Builders Wand
+    public static Boolean BUILDERS_WAND_PUT_WITHOUT_BLOCK = false;
+
     public static String BUILDERS_WAND_WORLD_TYPE_MODE = "BLACKLIST";
     public static List<String> BUILDERS_WAND_WORLD_TYPE = Arrays.asList(
             "exampleworld",
