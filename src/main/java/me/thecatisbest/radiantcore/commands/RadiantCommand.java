@@ -27,6 +27,7 @@ public class RadiantCommand implements TabExecutor {
             sender.sendMessage(Utilis.color("&6RadiantCore &7- &e指令列表"));
             sender.sendMessage(" ");
             sender.sendMessage(Utilis.color(" &6| &e/radiant slimemap &7- &6繪製史萊姆區塊在地圖裡"));
+            sender.sendMessage(Utilis.color(" &6| &e/radiant restorewand &7- &6撤銷上一次的記錄"));
             sender.sendMessage(Utilis.color(" &6| &e/radiant getcustomitem <ID> &7- &6獲取自製物品"));
             sender.sendMessage(Utilis.color(" &6| &e/radiant pluginslist &7- &6查看所有插件列表"));
             sender.sendMessage(Utilis.color(" &6| &e/radiant reload &7- &6重新加載配置"));
