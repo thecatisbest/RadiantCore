@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ public class PlayerStorage {
     private final RadiantCore plugin;
     private static File file;
     private static FileConfiguration config;
+    private static final HashMap<UUID, Boolean> flightMode = new HashMap<>();
 
     public PlayerStorage(RadiantCore plugin) {
         this.plugin = plugin;
@@ -59,6 +61,24 @@ public class PlayerStorage {
 
     public int getFlyTime(UUID playerId) {
         return config.getInt(playerId.toString() + ".flightTime", 0);
+    }
+
+    public static void setFlightMode(UUID playerId, boolean flightMode) {
+        PlayerStorage.flightMode.put(playerId, flightMode);
+        config.set(playerId.toString() + ".flightMode", flightMode);
+    }
+
+    public static boolean getFlightMode(UUID playerId) {
+        return PlayerStorage.flightMode.getOrDefault(playerId, false);
+    }
+
+
+    public static boolean containFlightMode(UUID playerId) {
+        return PlayerStorage.flightMode.containsKey(playerId);
+    }
+
+    public static boolean removeFlightMode(UUID playerId) {
+        return PlayerStorage.flightMode.remove(playerId);
     }
 
     public static void saveWandInventory(UUID playerId, Inventory inventory) {

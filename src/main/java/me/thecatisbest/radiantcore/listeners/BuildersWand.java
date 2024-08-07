@@ -74,11 +74,11 @@ public class BuildersWand implements Listener {
                     return;
 
                 cooldowns.put(player.getUniqueId(), currentTime);
-                Bukkit.getScheduler().runTaskLater(RadiantCore.getInstance(), () -> cooldowns.remove(player.getUniqueId()), 8);
-
                 Bukkit.getScheduler().scheduleSyncDelayedTask(RadiantCore.getInstance(),
                         () -> fillConnectedFaces(player, block, event.getBlockFace(), this.itemUtils.builders_wand().toItemStack())
                         , 1);
+
+                Bukkit.getScheduler().runTaskLater(RadiantCore.getInstance(), () -> cooldowns.remove(player.getUniqueId()), 8);
             }
         }
     }
@@ -91,7 +91,6 @@ public class BuildersWand implements Listener {
             if (inventory != null) {
                 PlayerStorage.saveWandInventory(player.getUniqueId(), inventory);
                 RadiantCommand.isWandUsingCMD.remove(player.getUniqueId());
-                wandInventories.remove(player.getUniqueId());
             }
         }
     }

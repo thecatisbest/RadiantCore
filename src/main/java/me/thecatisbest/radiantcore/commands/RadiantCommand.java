@@ -4,6 +4,7 @@ import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.config.LoadConfigs;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
 import me.thecatisbest.radiantcore.listeners.BuildersWand;
+import me.thecatisbest.radiantcore.listeners.MushroomSoup;
 import me.thecatisbest.radiantcore.listeners.SlimeMap;
 import me.thecatisbest.radiantcore.utilis.Utilis;
 import org.bukkit.*;
@@ -28,6 +29,7 @@ public class RadiantCommand implements TabExecutor {
             sender.sendMessage(" ");
             sender.sendMessage(Utilis.color(" &6| &e/radiant slimemap &7- &6繪製史萊姆區塊在地圖裡"));
             sender.sendMessage(Utilis.color(" &6| &e/radiant restorewand &7- &6撤銷上一次的記錄"));
+            sender.sendMessage(Utilis.color(" &6| &e/radiant toggleflight <true/false> &7- &6設置飛行狀態"));
             sender.sendMessage(Utilis.color(" &6| &e/radiant getcustomitem <ID> &7- &6獲取自製物品"));
             sender.sendMessage(Utilis.color(" &6| &e/radiant pluginslist &7- &6查看所有插件列表"));
             sender.sendMessage(Utilis.color(" &6| &e/radiant reload &7- &6重新加載配置"));
@@ -46,6 +48,7 @@ public class RadiantCommand implements TabExecutor {
                 Player player = (Player) sender;
 
                 BuildersWand.restoreWandOops(player);
+                return true;
             }
             if (args[0].equalsIgnoreCase("slimemap")) {
                 if (!(sender instanceof Player)) {
@@ -115,7 +118,7 @@ public class RadiantCommand implements TabExecutor {
             }
 
             if (target.isOnline()) {
-                player.sendMessage(Utilis.color("&e你正在打開 &6" + target.getName() + " &e的魔杖庫存 (&aOnline&e)"));
+                player.sendMessage(Utilis.color("&e你正在打開 &6" + target.getName() + " &e的魔杖庫存 (&6Online&e)"));
             } else {
                 player.sendMessage(Utilis.color("&e你正在打開 &6" + target.getName() + " &e的魔杖庫存 (&cOffline&e)"));
             }
@@ -125,8 +128,95 @@ public class RadiantCommand implements TabExecutor {
 
         }
 
-        if (args.length == 2 && args[0].equalsIgnoreCase("getcustomitem")) {
+        if (args[0].equalsIgnoreCase("toggleflight")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("你不能在控制台裡輸入這個指令");
+                return true;
+            }
+            Player player = (Player) sender;
 
+            if (args.length == 1) {
+                boolean currentMode = PlayerStorage.getFlightMode(player.getUniqueId());
+                PlayerStorage.setFlightMode(player.getUniqueId(), !currentMode);
+                if (!currentMode) {
+                    int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(player.getUniqueId()); // 从文件中加载
+                    if (savedTime > 0 && !MushroomSoup.tasks.containsKey(player.getUniqueId()) && !MushroomSoup.isAFK.containsKey(player.getUniqueId())) {
+                        MushroomSoup.flyTimes.put(player.getUniqueId(), savedTime);
+                        if (MushroomSoup.isWorldAllowed(player.getWorld())) {
+                            MushroomSoup.startFlying(player);
+                            Bukkit.getLogger().info("Successful");
+                        }
+                    }
+                    Bukkit.getLogger().info("True");
+                } else {
+                    Bukkit.getLogger().info("False");
+                }
+                player.sendMessage(Utilis.color("&6飛行模式 " + (!currentMode ? "&a啟用" : "&c禁用")));
+                return true;
+            }
+
+            if (args.length == 2) {
+                boolean newModeStatus = Boolean.parseBoolean(args[1]);
+                boolean currentMode = PlayerStorage.getFlightMode(player.getUniqueId());
+
+                if (currentMode == newModeStatus) {
+                    player.sendMessage(Utilis.color("&c你的飛行模式已經是 " + (newModeStatus ?  "&a啟用" : "&c禁用") + " &c狀態了！"));
+                } else {
+                    PlayerStorage.setFlightMode(player.getUniqueId(), newModeStatus);
+
+                    if (!currentMode) {
+                        int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(player.getUniqueId()); // 从文件中加载
+                        if (savedTime > 0 && !MushroomSoup.tasks.containsKey(player.getUniqueId()) && !MushroomSoup.isAFK.containsKey(player.getUniqueId())) {
+                            MushroomSoup.flyTimes.put(player.getUniqueId(), savedTime);
+                            if (MushroomSoup.isWorldAllowed(player.getWorld())) {
+                                MushroomSoup.startFlying(player);
+                                Bukkit.getLogger().info("Successful");
+                            }
+                        }
+                        Bukkit.getLogger().info("True");
+                    } else {
+                        Bukkit.getLogger().info("False");
+                    }
+
+                    player.sendMessage(Utilis.color("&6飛行模式 " + (newModeStatus ?  "&a啟用" : "&c禁用")));
+                }
+                return true;
+            }
+
+            if (args.length == 3) {
+                boolean newModeStatus = Boolean.parseBoolean(args[1]);
+                Player targetPlayer = Bukkit.getPlayer(args[2]);
+
+                if (targetPlayer != null) {
+                    boolean currentMode = PlayerStorage.getFlightMode(targetPlayer.getUniqueId());
+                    if (currentMode == newModeStatus) {
+                        sender.sendMessage(Utilis.color("&6" + targetPlayer.getName() + " &c的飛行模式已經是 " + (newModeStatus ?  "&a啟用" : "&c禁用") + " &c狀態了！"));
+                    } else {
+                        PlayerStorage.setFlightMode(targetPlayer.getUniqueId(), newModeStatus);
+
+                        if (!currentMode) {
+                            int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(targetPlayer.getUniqueId()); // 从文件中加载
+                            if (savedTime > 0 && !MushroomSoup.tasks.containsKey(targetPlayer.getUniqueId()) && !MushroomSoup.isAFK.containsKey(targetPlayer.getUniqueId())) {
+                                MushroomSoup.flyTimes.put(targetPlayer.getUniqueId(), savedTime);
+                                if (MushroomSoup.isWorldAllowed(targetPlayer.getWorld())) {
+                                    MushroomSoup.startFlying(targetPlayer);
+                                    Bukkit.getLogger().info("Successful");
+                                }
+                            }
+                        } else {
+                            Bukkit.getLogger().info("False");
+                        }
+
+                        sender.sendMessage(Utilis.color("&e" + targetPlayer.getName() + " &6的飛行模式設置為 " + (newModeStatus ?  "&a啟用" : "&c禁用")));
+                    }
+                } else {
+                    player.sendMessage(Utilis.color("&c找不到該玩家！"));
+                }
+                return true;
+            }
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("getcustomitem")) {
             if (!(sender instanceof Player)) {
                 sender.sendMessage("你不能在控制台裡輸入這個指令");
                 return true;
@@ -209,6 +299,7 @@ public class RadiantCommand implements TabExecutor {
 
         switch (args.length) {
             case 1:
+                toComplete.add("toggleflight");
                 toComplete.add("pluginslist");
                 toComplete.add("reload");
                 toComplete.add("getcustomitem");
@@ -221,6 +312,15 @@ public class RadiantCommand implements TabExecutor {
                 }
                 return result;
             case 2:
+                if (args[0].equalsIgnoreCase("toggleflight")) {
+                    toComplete.add("true");
+                    toComplete.add("false");
+                    for (String a : toComplete) {
+                        if (a.toLowerCase().startsWith(args[1].toLowerCase()))
+                            result.add(a);
+                    }
+                    return result;
+                }
                 if (args[0].equalsIgnoreCase("openwandinv")) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         toComplete.add(player.getName());
@@ -238,6 +338,17 @@ public class RadiantCommand implements TabExecutor {
                     toComplete.add("GRAPPLING_HOOK");
                     for (String a : toComplete) {
                         if (a.toLowerCase().startsWith(args[1].toLowerCase()))
+                            result.add(a);
+                    }
+                    return result;
+                }
+            case 3:
+                if (args[0].equalsIgnoreCase("toggleflight")) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        toComplete.add(player.getName());
+                    }
+                    for (String a : toComplete) {
+                        if (a.toLowerCase().startsWith(args[2].toLowerCase()))
                             result.add(a);
                     }
                     return result;
