@@ -273,6 +273,8 @@ public class BuildersWand implements Listener {
         }
     }
 
+
+    // World
     private boolean isWorldAllowed(World world) {
         String worldName = world.getName();
         switch (ConfigValue.BUILDERS_WAND_WORLD_TYPE_MODE.toUpperCase()) {
