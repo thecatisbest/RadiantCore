@@ -8,6 +8,7 @@ public class LoadConfigs {
         final long start = System.currentTimeMillis();
 
         MainConfig.load();
+        ItemsConfig.load();
 
         final long end = System.currentTimeMillis();
         RadiantCore.getInstance().getLogger().info("Configs loaded in " + (end - start) + "ms.");

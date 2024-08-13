@@ -72,15 +72,6 @@ public class PlayerStorage {
         return PlayerStorage.flightMode.getOrDefault(playerId, false);
     }
 
-
-    public static boolean containFlightMode(UUID playerId) {
-        return PlayerStorage.flightMode.containsKey(playerId);
-    }
-
-    public static boolean removeFlightMode(UUID playerId) {
-        return PlayerStorage.flightMode.remove(playerId);
-    }
-
     public static void saveWandInventory(UUID playerId, Inventory inventory) {
         List<ItemStack> items = new ArrayList<>();
         for (ItemStack item : inventory.getContents()) {
@@ -115,10 +106,8 @@ public class PlayerStorage {
     public static void updatePlayerData(Player player) {
         UUID playerId = player.getUniqueId();
         setPlayerName(playerId, player.getName());
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!config.contains(playerId + ".flightMode")) {
+            setFlightMode(playerId, false); // 如果配置中没有，设置默认值 false
         }
     }
 

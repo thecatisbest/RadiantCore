@@ -147,11 +147,8 @@ public class RadiantCommand implements TabExecutor {
                             Bukkit.getLogger().info("Successful");
                         }
                     }
-                    Bukkit.getLogger().info("True");
-                } else {
-                    Bukkit.getLogger().info("False");
                 }
-                player.sendMessage(Utilis.color("&6飛行模式 " + (!currentMode ? "&a啟用" : "&c禁用")));
+                player.sendMessage(Utilis.color("&6你的飛行模式已 " + (!currentMode ? "&a啟用" : "&c禁用")));
                 return true;
             }
 
@@ -173,17 +170,19 @@ public class RadiantCommand implements TabExecutor {
                                 Bukkit.getLogger().info("Successful");
                             }
                         }
-                        Bukkit.getLogger().info("True");
-                    } else {
-                        Bukkit.getLogger().info("False");
                     }
 
-                    player.sendMessage(Utilis.color("&6飛行模式 " + (newModeStatus ?  "&a啟用" : "&c禁用")));
+                    player.sendMessage(Utilis.color("&6你的飛行模式已 " + (newModeStatus ?  "&a啟用" : "&c禁用")));
                 }
                 return true;
             }
 
             if (args.length == 3) {
+                if (!sender.hasPermission("radiant.command.toggleflight.setplayer")) {
+                    sender.sendMessage(Utilis.color("&c你沒有權限使用這個指令！"));
+                    return true;
+                }
+
                 boolean newModeStatus = Boolean.parseBoolean(args[1]);
                 Player targetPlayer = Bukkit.getPlayer(args[2]);
 
@@ -200,11 +199,8 @@ public class RadiantCommand implements TabExecutor {
                                 MushroomSoup.flyTimes.put(targetPlayer.getUniqueId(), savedTime);
                                 if (MushroomSoup.isWorldAllowed(targetPlayer.getWorld())) {
                                     MushroomSoup.startFlying(targetPlayer);
-                                    Bukkit.getLogger().info("Successful");
                                 }
                             }
-                        } else {
-                            Bukkit.getLogger().info("False");
                         }
 
                         sender.sendMessage(Utilis.color("&e" + targetPlayer.getName() + " &6的飛行模式設置為 " + (newModeStatus ?  "&a啟用" : "&c禁用")));

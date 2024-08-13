@@ -48,8 +48,9 @@ public final class RadiantCore extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         if (playerStorage != null) {
-            playerStorage.saveConfig();
+            PlayerStorage.saveConfig();
         }
+        LoadConfigs.loadConfigs();
     }
 
     public @NonNull BukkitAudiences adventure() {
