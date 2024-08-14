@@ -69,16 +69,7 @@ public class PlayerStorage {
     }
 
     public static boolean getFlightMode(UUID playerId) {
-        return PlayerStorage.flightMode.getOrDefault(playerId, false);
-    }
-
-
-    public static boolean containFlightMode(UUID playerId) {
-        return PlayerStorage.flightMode.containsKey(playerId);
-    }
-
-    public static boolean removeFlightMode(UUID playerId) {
-        return PlayerStorage.flightMode.remove(playerId);
+        return config.getBoolean(playerId.toString() + ".flightMode", false);
     }
 
     public static void saveWandInventory(UUID playerId, Inventory inventory) {
@@ -115,10 +106,10 @@ public class PlayerStorage {
     public static void updatePlayerData(Player player) {
         UUID playerId = player.getUniqueId();
         setPlayerName(playerId, player.getName());
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!getFlightMode(playerId)) {
+            setFlightMode(playerId, getFlightMode(playerId));
+        } else {
+            PlayerStorage.flightMode.put(playerId, getFlightMode(playerId));
         }
     }
 
