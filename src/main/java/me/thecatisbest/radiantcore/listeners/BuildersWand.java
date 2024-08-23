@@ -1,5 +1,8 @@
 package me.thecatisbest.radiantcore.listeners;
 
+import com.bekvon.bukkit.residence.api.ResidenceApi;
+import com.bekvon.bukkit.residence.containers.Flags;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.commands.RadiantCommand;
 import me.thecatisbest.radiantcore.config.ConfigValue;
@@ -72,6 +75,11 @@ public class BuildersWand implements Listener {
                 // 1 second = 1000
                 if (currentTime - lastUsed < 500)
                     return;
+
+                if (!resCheck(player, event.getClickedBlock().getLocation())) {
+                    event.setCancelled(true);
+                    return;
+                }
 
                 cooldowns.put(player.getUniqueId(), currentTime);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(RadiantCore.getInstance(),
@@ -152,8 +160,14 @@ public class BuildersWand implements Listener {
 
             // place new material at the selected block
             Block fillBlock = w.getBlockAt(l.clone().add(translate));
-            if (canPlaceBlock(player, fillBlock.getLocation())) {
 
+            // 检查目标方块是否位于领地内，如果在领地内则跳过
+            if (!resCheck(player, fillBlock.getLocation())) {
+                blocks.removeIf(blocks.getFirst()::equals);
+                continue;
+            }
+
+            if (canPlaceBlock(player, fillBlock.getLocation())) {
                 blocks.removeIf(blocks.getFirst()::equals);
                 if (fillBlock.getType() != fillMaterial) {
                     blockStates.add(fillBlock.getState());
@@ -179,6 +193,17 @@ public class BuildersWand implements Listener {
 
             player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_BULLET_HIT, 1, 1);
             player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE, 0);
+
+            // 循环每一个被放置的方块，记录放置操作
+            for (BlockState blockState : blockStates) {
+                Block block = blockState.getBlock();
+                BlockData blockData = block.getBlockData();
+                RadiantCore.getInstance().getCoreProtectAPI().logPlacement(
+                        player.getName(),
+                        block.getLocation(),
+                        block.getType(),
+                        blockData);
+            }
 
             TextComponent textComponent = Component.text("你已放置 ")
                     .color(NamedTextColor.YELLOW)
@@ -222,6 +247,7 @@ public class BuildersWand implements Listener {
         for (int counter = 1; counter < blocks.size(); counter++) {
             world.getBlockAt(blocks.get(counter).getLocation()).setType(blocks.get(counter).getType());
         }
+
 
         wandOops.remove(player);
         player.sendMessage(Utilis.color("&e已撤銷 &6" + (blocks.size() - 1) + " &e個方塊！"));
@@ -284,5 +310,22 @@ public class BuildersWand implements Listener {
             default:
                 return true;
         }
+    }
+    public boolean resCheck(Player player, Location location) {
+        ClaimedResidence residence = ResidenceApi.getResidenceManager().getByLoc(location);
+
+        if (residence == null) {
+            return true;
+        }
+
+        if (residence.getOwnerUUID().equals(player.getUniqueId()) || player.isOp() || player.hasPermission("radiant.res")) {
+            return true;
+        }
+
+        if (!residence.getPermissions().playerHas(player, Flags.valueOf("build") , true)) {
+            return false;
+        }
+
+        return true;
     }
 }

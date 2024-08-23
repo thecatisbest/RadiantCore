@@ -6,6 +6,8 @@ import me.thecatisbest.radiantcore.config.ConfigValue;
 import me.thecatisbest.radiantcore.utilis.builder.ItemBuilder;
 import org.bukkit.Material;
 
+import java.util.Arrays;
+
 public class ItemUtils {
     
     public ItemBuilder magic_mushroom_soup() {
@@ -46,6 +48,15 @@ public class ItemUtils {
         return grappling_hook;
     }
 
+    public ItemBuilder debug_stick() {
+        ItemBuilder debug_stick = new ItemBuilder(Material.STICK);
+        debug_stick.setItemName(Utilis.color("玩家调试棒"));
+        debug_stick.setItemLore(Utilis.color(Arrays.asList("&6右键 &e调整方块转向、栅栏接点", "&6蹲下+右键 &e自另一侧调整方块转向、栅栏接点", "&6左键 &e不触发物理更新下移除方块")));
+        debug_stick.addUniqueId(Key.DEBUG_STICK);
+
+        return debug_stick;
+    }
+
     @Getter
     @RequiredArgsConstructor
     public enum Key {
@@ -53,7 +64,8 @@ public class ItemUtils {
         MAGIC_MUSHROOM_SOUP("magic_mushroom_soup"),
         SUPER_MAGIC_MUSHROOM_SOUP("super_magic_mushroom_soup"),
         BUILDERS_WAND("builders_wand"),
-        GRAPPLING_HOOK("grappling_hook");
+        GRAPPLING_HOOK("grappling_hook"),
+        DEBUG_STICK("debug_stick");
         
         private final String name;
     }

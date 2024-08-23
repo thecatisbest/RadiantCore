@@ -79,6 +79,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>playpro-repo</id>
+            <url>https://maven.playpro.com</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -123,6 +127,19 @@
             <version>9.7.4.1</version>
             <scope>system</scope>
             <systemPath>${basedir}/libs/CMIAPI-9.7.4.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>res</groupId>
+            <artifactId>Residence</artifactId>
+            <version>5.1.5.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/Residence5.1.5.3.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>net.coreprotect</groupId>
+            <artifactId>coreprotect</artifactId>
+            <version>23.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>

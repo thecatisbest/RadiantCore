@@ -28,6 +28,7 @@ public class MushroomSoup implements Listener {
     public static final HashMap<UUID, Integer> flyTimes = new HashMap<>();
     public static final HashMap<UUID, Integer> tasks = new HashMap<>();
     public static final HashMap<UUID, Boolean> isAFK = new HashMap<>();
+    private final int maxFlyTimes = 3 * 60 * 60; // 三小时的秒数
     private final int magicDuration = ConfigValue.MAGIC_MUSHROOM_SOUP_DURATION;
     private final int superMagicDuration = ConfigValue.SUPER_MAGIC_MUSHROOM_SOUP_DURATION;
 
@@ -38,7 +39,6 @@ public class MushroomSoup implements Listener {
         ItemStack item = event.getItem();
         String metadataValue = ItemBuilder.getPersistentMetadata(item);
 
-        int maxFlyTimes = 3 * 24 * 60 * 60; // 三天的秒数
         int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
 
         if (item != null && metadataValue != null && (metadataValue.equals(ItemUtils.Key.MAGIC_MUSHROOM_SOUP.getName()) ||
@@ -55,12 +55,12 @@ public class MushroomSoup implements Listener {
                 event.setCancelled(true);
                 return;
             }
-        }
 
-        if (flyTimes.getOrDefault(playerId, savedTime) > maxFlyTimes) {
-            player.sendMessage(Utilis.color("&c你無法再延長飛行時間，因為已經達到最大效果時間 (三天)！"));
-            event.setCancelled(true);
-            return;
+            if (flyTimes.getOrDefault(playerId, savedTime) > maxFlyTimes) {
+                player.sendMessage(Utilis.color("&c你無法再延長飛行時間，因為已經達到最大效果時間 (三小時)！"));
+                event.setCancelled(true);
+                return;
+            }
         }
 
         if (item != null && metadataValue != null && metadataValue.equals(ItemUtils.Key.MAGIC_MUSHROOM_SOUP.getName()) && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
@@ -98,6 +98,11 @@ public class MushroomSoup implements Listener {
         int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
         if (savedTime > 0) {
             flyTimes.put(playerId, savedTime);
+            if (flyTimes.getOrDefault(playerId, savedTime) > maxFlyTimes) {
+                player.sendMessage(Utilis.color("&c檢測到你的飛行時間已超過三小時，系統將爲你强制設定至三小時！"));
+                RadiantCore.getInstance().getPlayerStorage().setFlyTime(playerId, maxFlyTimes);
+                flyTimes.put(playerId, maxFlyTimes);
+            }
             if (!PlayerStorage.getFlightMode(playerId)) {
                 return;
             }
@@ -178,7 +183,6 @@ public class MushroomSoup implements Listener {
 
             @Override
             public void run() {
-
                 if (player.getGameMode().equals(GameMode.CREATIVE) || player.getGameMode().equals(GameMode.SPECTATOR)) {
                     return;
                 }
@@ -241,6 +245,7 @@ public class MushroomSoup implements Listener {
             tasks.remove(playerId);
         }
         startFlying(player);
+        PlayerStorage.setFlightMode(playerId, true);
 
         if (isFirstUse) {
             player.sendMessage(Utilis.color("&e你現在可以飛行 &6" + newTime + " &e秒"));
