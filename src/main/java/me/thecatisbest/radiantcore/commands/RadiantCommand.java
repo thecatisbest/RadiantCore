@@ -6,7 +6,7 @@ import me.thecatisbest.radiantcore.config.PlayerStorage;
 import me.thecatisbest.radiantcore.listeners.BuildersWand;
 import me.thecatisbest.radiantcore.listeners.MushroomSoup;
 import me.thecatisbest.radiantcore.listeners.SlimeMap;
-import me.thecatisbest.radiantcore.utilis.Utilis;
+import me.thecatisbest.radiantcore.utils.Utils;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -25,16 +25,16 @@ public class RadiantCommand implements TabExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             sender.sendMessage(" ");
-            sender.sendMessage(Utilis.color("&6RadiantCore &7- &e指令列表"));
+            sender.sendMessage(Utils.color("&6RadiantCore &7- &e指令列表"));
             sender.sendMessage(" ");
-            sender.sendMessage(Utilis.color(" &6| &e/radiant slimemap &7- &6繪製史萊姆區塊在地圖裡"));
-            sender.sendMessage(Utilis.color(" &6| &e/radiant restorewand &7- &6撤銷上一次的記錄"));
-            sender.sendMessage(Utilis.color(" &6| &e/radiant toggleflight <true/false> &7- &6設置飛行狀態"));
-            sender.sendMessage(Utilis.color(" &6| &e/radiant getcustomitem <ID> &7- &6獲取自製物品"));
-            sender.sendMessage(Utilis.color(" &6| &e/radiant pluginslist &7- &6查看所有插件列表"));
-            sender.sendMessage(Utilis.color(" &6| &e/radiant reload &7- &6重新加載配置"));
+            sender.sendMessage(Utils.color(" &6| &e/radiant slimemap &7- &6繪製史萊姆區塊在地圖裡"));
+            sender.sendMessage(Utils.color(" &6| &e/radiant restorewand &7- &6撤銷上一次的記錄"));
+            sender.sendMessage(Utils.color(" &6| &e/radiant toggleflight <true/false> &7- &6設置飛行狀態"));
+            sender.sendMessage(Utils.color(" &6| &e/radiant getcustomitem <ID> &7- &6獲取自製物品"));
+            sender.sendMessage(Utils.color(" &6| &e/radiant pluginslist &7- &6查看所有插件列表"));
+            sender.sendMessage(Utils.color(" &6| &e/radiant reload &7- &6重新加載配置"));
             sender.sendMessage(" ");
-            sender.sendMessage(Utilis.color(" &d插件開發者: &b" + RadiantCore.getInstance().getDescription().getAuthors()));
+            sender.sendMessage(Utils.color(" &d插件開發者: &b" + RadiantCore.getInstance().getDescription().getAuthors()));
             sender.sendMessage(" ");
             return true;
         }
@@ -58,11 +58,11 @@ public class RadiantCommand implements TabExecutor {
                 Player player = (Player) sender;
 
                 if (!player.hasPermission("radiant.command.slimemap")) {
-                    player.sendMessage(Utilis.color("&c你沒有權限使用這個指令！"));
+                    player.sendMessage(Utils.color("&c你沒有權限使用這個指令！"));
                     return true;
                 }
                 if (getMap(player) == -1) {
-                    player.sendMessage(Utilis.color("&c你必須握著地圖才能使用！"));
+                    player.sendMessage(Utils.color("&c你必須握著地圖才能使用！"));
                     return true;
                 }
                 ItemStack newItem;
@@ -71,9 +71,9 @@ public class RadiantCommand implements TabExecutor {
                 MapMeta meta = (MapMeta) newItem.getItemMeta();
 
                 if (SlimeMap.slimemaps.contains(meta.getMapId())) {
-                    player.sendMessage(Utilis.color("&a現在你的地圖會顯示 &e&lSlime Chunk &a了"));
+                    player.sendMessage(Utils.color("&a現在你的地圖會顯示 &e&lSlime Chunk &a了"));
                 } else {
-                    player.sendMessage(Utilis.color("&c現在你的地圖不會顯示 &e&lSlime Chunk &c了"));
+                    player.sendMessage(Utils.color("&c現在你的地圖不會顯示 &e&lSlime Chunk &c了"));
                 }
 
                 player.getInventory().setItemInMainHand(newItem);
@@ -81,20 +81,20 @@ public class RadiantCommand implements TabExecutor {
             }
             if (args[0].equalsIgnoreCase("pluginslist")) {
                 if (!sender.hasPermission("radiant.command.pluginslist")) {
-                    sender.sendMessage(Utilis.color("&c你沒有權限使用這個指令！"));
+                    sender.sendMessage(Utils.color("&c你沒有權限使用這個指令！"));
                     return true;
                 }
-                sender.sendMessage(Utilis.color("&6Bukkit 插件列表:"));
+                sender.sendMessage(Utils.color("&6Bukkit 插件列表:"));
                 sender.sendMessage(listPlugins(sender));
                 return true;
             }
             if (args[0].equalsIgnoreCase("reload")) {
                 if (!sender.hasPermission("radiant.command.reload")) {
-                    sender.sendMessage(Utilis.color("&c你沒有權限使用這個指令！"));
+                    sender.sendMessage(Utils.color("&c你沒有權限使用這個指令！"));
                     return true;
                 }
                 LoadConfigs.loadConfigs();
-                sender.sendMessage(Utilis.color("&a已重新加載配置文件!"));
+                sender.sendMessage(Utils.color("&a已重新加載配置文件!"));
                 return true;
             }
         }
@@ -108,19 +108,19 @@ public class RadiantCommand implements TabExecutor {
             OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
 
             if (!player.hasPermission("radiant.command.openwandinv")) {
-                player.sendMessage(Utilis.color("&c你沒有權限使用這個指令！"));
+                player.sendMessage(Utils.color("&c你沒有權限使用這個指令！"));
                 return true;
             }
 
             if (!target.hasPlayedBefore() && !target.isOnline()) {
-                player.sendMessage(Utilis.color("&c找不到該玩家!"));
+                player.sendMessage(Utils.color("&c找不到該玩家!"));
                 return true;
             }
 
             if (target.isOnline()) {
-                player.sendMessage(Utilis.color("&e你正在打開 &6" + target.getName() + " &e的魔杖庫存 (&6Online&e)"));
+                player.sendMessage(Utils.color("&e你正在打開 &6" + target.getName() + " &e的魔杖庫存 (&6Online&e)"));
             } else {
-                player.sendMessage(Utilis.color("&e你正在打開 &6" + target.getName() + " &e的魔杖庫存 (&cOffline&e)"));
+                player.sendMessage(Utils.color("&e你正在打開 &6" + target.getName() + " &e的魔杖庫存 (&cOffline&e)"));
             }
 
             openWandInventory(target, player);
@@ -147,7 +147,7 @@ public class RadiantCommand implements TabExecutor {
                         }
                     }
                 }
-                player.sendMessage(Utilis.color("&6你的飛行模式已 " + (!currentMode ? "&a啟用" : "&c禁用")));
+                player.sendMessage(Utils.color("&6你的飛行模式已 " + (!currentMode ? "&a啟用" : "&c禁用")));
                 return true;
             }
 
@@ -156,7 +156,7 @@ public class RadiantCommand implements TabExecutor {
                 boolean currentMode = PlayerStorage.getFlightMode(player.getUniqueId());
 
                 if (currentMode == newModeStatus) {
-                    player.sendMessage(Utilis.color("&c你的飛行模式已經是 " + (newModeStatus ?  "&a啟用" : "&c禁用") + " &c狀態了！"));
+                    player.sendMessage(Utils.color("&c你的飛行模式已經是 " + (newModeStatus ?  "&a啟用" : "&c禁用") + " &c狀態了！"));
                 } else {
                     PlayerStorage.setFlightMode(player.getUniqueId(), newModeStatus);
 
@@ -170,14 +170,14 @@ public class RadiantCommand implements TabExecutor {
                         }
                     }
 
-                    player.sendMessage(Utilis.color("&6你的飛行模式已 " + (newModeStatus ?  "&a啟用" : "&c禁用")));
+                    player.sendMessage(Utils.color("&6你的飛行模式已 " + (newModeStatus ?  "&a啟用" : "&c禁用")));
                 }
                 return true;
             }
 
             if (args.length == 3) {
                 if (!sender.hasPermission("radiant.command.toggleflight.setplayer")) {
-                    sender.sendMessage(Utilis.color("&c你沒有權限使用這個指令！"));
+                    sender.sendMessage(Utils.color("&c你沒有權限使用這個指令！"));
                     return true;
                 }
 
@@ -187,7 +187,7 @@ public class RadiantCommand implements TabExecutor {
                 if (targetPlayer != null) {
                     boolean currentMode = PlayerStorage.getFlightMode(targetPlayer.getUniqueId());
                     if (currentMode == newModeStatus) {
-                        sender.sendMessage(Utilis.color("&6" + targetPlayer.getName() + " &c的飛行模式已經是 " + (newModeStatus ?  "&a啟用" : "&c禁用") + " &c狀態了！"));
+                        sender.sendMessage(Utils.color("&6" + targetPlayer.getName() + " &c的飛行模式已經是 " + (newModeStatus ?  "&a啟用" : "&c禁用") + " &c狀態了！"));
                     } else {
                         PlayerStorage.setFlightMode(targetPlayer.getUniqueId(), newModeStatus);
 
@@ -201,10 +201,10 @@ public class RadiantCommand implements TabExecutor {
                             }
                         }
 
-                        sender.sendMessage(Utilis.color("&e" + targetPlayer.getName() + " &6的飛行模式設置為 " + (newModeStatus ?  "&a啟用" : "&c禁用")));
+                        sender.sendMessage(Utils.color("&e" + targetPlayer.getName() + " &6的飛行模式設置為 " + (newModeStatus ?  "&a啟用" : "&c禁用")));
                     }
                 } else {
-                    player.sendMessage(Utilis.color("&c找不到該玩家！"));
+                    player.sendMessage(Utils.color("&c找不到該玩家！"));
                 }
                 return true;
             }
@@ -220,29 +220,29 @@ public class RadiantCommand implements TabExecutor {
             String itemType = args[1];
 
             if (!player.hasPermission("radiant.command.getcustomitem")) {
-                player.sendMessage(Utilis.color("&c你沒有權限使用這個指令！"));
+                player.sendMessage(Utils.color("&c你沒有權限使用這個指令！"));
                 return true;
             }
 
             switch (itemType) {
                 case "MAGIC_MUSHROOM_SOUP":
                     player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().magic_mushroom_soup().toItemStack());
-                    player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
+                    player.sendMessage(Utils.color("&6你獲得了一個 &e" + itemType));
                     break;
                 case "SUPER_MAGIC_MUSHROOM_SOUP":
                     player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().super_magic_mushroom_soup().toItemStack());
-                    player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
+                    player.sendMessage(Utils.color("&6你獲得了一個 &e" + itemType));
                     break;
                 case "BUILDERS_WAND":
                     player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().builders_wand().toItemStack());
-                    player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
+                    player.sendMessage(Utils.color("&6你獲得了一個 &e" + itemType));
                     break;
                 case "GRAPPLING_HOOK":
                     player.getInventory().addItem(RadiantCore.getInstance().getItemUtils().grappling_hook().toItemStack());
-                    player.sendMessage(Utilis.color("&6你獲得了一個 &e" + itemType));
+                    player.sendMessage(Utils.color("&6你獲得了一個 &e" + itemType));
                     break;
                 default:
-                    player.sendMessage(Utilis.color("&c無效的物品: &e" + itemType));
+                    player.sendMessage(Utils.color("&c無效的物品: &e" + itemType));
                     break;
             }
             return true;
@@ -260,12 +260,17 @@ public class RadiantCommand implements TabExecutor {
 
     private String listPlugins(CommandSender sender) {
         Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
-        StringBuilder pluginList = new StringBuilder();
+        List<Plugin> sortedPlugins = Arrays.asList(plugins);
 
+        // 按插件名称排序
+        Collections.sort(sortedPlugins, (p1, p2) ->
+                p1.getDescription().getName().compareToIgnoreCase(p2.getDescription().getName()));
+
+        StringBuilder pluginList = new StringBuilder();
         pluginList.append("\n");
 
-        for (int i = 0; i < plugins.length; i++) {
-            Plugin plugin = plugins[i];
+        for (int i = 0; i < sortedPlugins.size(); i++) {
+            Plugin plugin = sortedPlugins.get(i);
             String name = plugin.getDescription().getName();
             String version = plugin.getDescription().getVersion();
             boolean enabled = plugin.isEnabled();
@@ -354,7 +359,7 @@ public class RadiantCommand implements TabExecutor {
 
     private void openWandInventory(OfflinePlayer target, Player viewer) {
         Inventory inv = BuildersWand.wandInventories.computeIfAbsent(target.getUniqueId(), k -> {
-            Inventory newInv = Bukkit.createInventory(null, 27, Utilis.color("&8" + target.getName() + " 的魔杖庫存"));
+            Inventory newInv = Bukkit.createInventory(null, 27, Utils.color("&8" + target.getName() + " 的魔杖庫存"));
             PlayerStorage.loadWandInventory(target.getUniqueId(), newInv);
             return newInv;
         });

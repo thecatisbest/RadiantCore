@@ -1,4 +1,4 @@
-package me.thecatisbest.radiantcore.utilis;
+package me.thecatisbest.radiantcore.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utilis {
+public class Utils {
 
     /**
      * @param msg The message to format

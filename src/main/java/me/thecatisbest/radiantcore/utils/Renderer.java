@@ -1,4 +1,4 @@
-package me.thecatisbest.radiantcore.utilis;
+package me.thecatisbest.radiantcore.utils;
 
 import me.thecatisbest.radiantcore.listeners.SlimeMap;
 import org.bukkit.entity.Player;
@@ -18,7 +18,7 @@ public class Renderer extends MapRenderer {
         if (!SlimeMap.slimemaps.contains(map.getId()))
             return;
         this.oncePerScale = map.getScale();
-        player.sendMessage(Utilis.color("&a已加載史萊姆地圖！"));
+        player.sendMessage(Utils.color("&a已加載史萊姆地圖！"));
         int bpp = scaleToBlocksPerChunk(map.getScale());
         for (int x = 0; x < 128; x++) {
             for (int z = 0; z < 128; z++) {

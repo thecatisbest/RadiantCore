@@ -1,4 +1,4 @@
-package me.thecatisbest.radiantcore.utilis;
+package me.thecatisbest.radiantcore.utils;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

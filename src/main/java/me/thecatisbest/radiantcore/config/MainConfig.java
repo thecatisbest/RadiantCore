@@ -1,7 +1,7 @@
 package me.thecatisbest.radiantcore.config;
 
 import me.thecatisbest.radiantcore.RadiantCore;
-import me.thecatisbest.radiantcore.utilis.YamlConfigurationDescriptor;
+import me.thecatisbest.radiantcore.utils.YamlConfigurationDescriptor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -48,6 +48,8 @@ public class MainConfig {
         ConfigValue.COMMANDS = getString(config, "commands", ConfigValue.COMMANDS);
         ConfigValue.SWAP = getBoolean(config, "cancel_swap", ConfigValue.SWAP);
 
+        ConfigValue.SHIFT_RIGHT_INVIS_FRAMES = getBoolean(config, "shift-right-invis-frames", ConfigValue.SHIFT_RIGHT_INVIS_FRAMES);
+
         ConfigValue.MUSHROOM_SOUP_WORLD_TYPE_MODE = getString(config, "Mushroom-Soup.world-type-mode", ConfigValue.MUSHROOM_SOUP_WORLD_TYPE_MODE);
         ConfigValue.MUSHROOM_SOUP_WORLD_TYPE = getStringList(config, "Mushroom-Soup.world-type", ConfigValue.MUSHROOM_SOUP_WORLD_TYPE);
 
@@ -80,6 +82,11 @@ public class MainConfig {
 
         config.set("commands", ConfigValue.COMMANDS);
         config.set("cancel_swap", ConfigValue.SWAP);
+
+        config.addEmptyLine();
+
+        config.addComment("Allows player to shift-right-click an item frame to turn it invisible");
+        config.set("shift-right-invis-frames", ConfigValue.SHIFT_RIGHT_INVIS_FRAMES);
 
         config.addEmptyLine();
 

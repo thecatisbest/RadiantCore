@@ -1,7 +1,7 @@
 package me.thecatisbest.radiantcore.config;
 
 import me.thecatisbest.radiantcore.RadiantCore;
-import me.thecatisbest.radiantcore.utilis.YamlConfigurationDescriptor;
+import me.thecatisbest.radiantcore.utils.YamlConfigurationDescriptor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 

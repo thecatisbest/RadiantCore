@@ -1,8 +1,8 @@
-package me.thecatisbest.radiantcore.utilis.builder;
+package me.thecatisbest.radiantcore.utils.builder;
 
 import me.thecatisbest.radiantcore.RadiantCore;
-import me.thecatisbest.radiantcore.utilis.ItemUtils;
-import me.thecatisbest.radiantcore.utilis.Utilis;
+import me.thecatisbest.radiantcore.utils.ItemUtils;
+import me.thecatisbest.radiantcore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +30,7 @@ public class ItemBuilder {
     public ItemBuilder setItemName(String name) {
         ItemMeta meta = this.itemStack.getItemMeta();
         if (meta != null)
-            meta.setDisplayName(Utilis.color(name));
+            meta.setDisplayName(Utils.color(name));
         this.itemStack.setItemMeta(meta);
         return this;
     }

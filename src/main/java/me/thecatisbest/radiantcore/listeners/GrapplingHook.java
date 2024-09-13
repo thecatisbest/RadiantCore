@@ -1,9 +1,9 @@
 package me.thecatisbest.radiantcore.listeners;
 
 import me.thecatisbest.radiantcore.config.ConfigValue;
-import me.thecatisbest.radiantcore.utilis.ItemUtils;
-import me.thecatisbest.radiantcore.utilis.Utilis;
-import me.thecatisbest.radiantcore.utilis.builder.ItemBuilder;
+import me.thecatisbest.radiantcore.utils.ItemUtils;
+import me.thecatisbest.radiantcore.utils.Utils;
+import me.thecatisbest.radiantcore.utils.builder.ItemBuilder;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ public class GrapplingHook implements Listener {
 
         if (metadataValue != null && metadataValue.equals(ItemUtils.Key.GRAPPLING_HOOK.getName())) {
             if (!isWorldAllowed(player.getWorld())) {
-                player.sendMessage(Utilis.color("&c你不能在這個世界使用抓鈎！"));
+                player.sendMessage(Utils.color("&c你不能在這個世界使用抓鈎！"));
                 return;
             }
             if (event.getState().equals(PlayerFishEvent.State.CAUGHT_ENTITY)

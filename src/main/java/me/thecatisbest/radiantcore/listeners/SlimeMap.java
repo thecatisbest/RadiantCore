@@ -1,6 +1,6 @@
 package me.thecatisbest.radiantcore.listeners;
 
-import me.thecatisbest.radiantcore.utilis.Renderer;
+import me.thecatisbest.radiantcore.utils.Renderer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.MapInitializeEvent;

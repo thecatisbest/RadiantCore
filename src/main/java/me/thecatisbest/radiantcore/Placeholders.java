@@ -1,8 +1,10 @@
 package me.thecatisbest.radiantcore;
 
+import com.bekvon.bukkit.residence.api.ResidenceApi;
+import com.bekvon.bukkit.residence.containers.ResidencePlayer;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
-import me.thecatisbest.radiantcore.utilis.Utilis;
+import me.thecatisbest.radiantcore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +12,7 @@ public class Placeholders extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getIdentifier() {
-        return "radiantcore";
+        return "radiant";
     }
 
     @Override
@@ -28,13 +30,21 @@ public class Placeholders extends PlaceholderExpansion {
         if (player == null) {
             return "";
         }
-        if (params.equalsIgnoreCase("mushroom-time")) {
+        if (params.equalsIgnoreCase("flight_time")) {
             int timeLeft = RadiantCore.getInstance().getPlayerStorage().getFlyTime(player.getUniqueId());
             return String.valueOf(timeLeft);
         }
-        if (params.equalsIgnoreCase("flight-status")) {
+        if (params.equalsIgnoreCase("flight_status")) {
             boolean currentMode = PlayerStorage.getFlightMode(player.getUniqueId());
-            return currentMode ? Utilis.color( "&a啟用") : Utilis.color("&c禁用");
+            return currentMode ? Utils.color( "&a啟用") : Utils.color("&c禁用");
+        }
+        if (params.equalsIgnoreCase("residence_user_maxx")) {
+            ResidencePlayer resPlayer = ResidenceApi.getPlayerManager().getResidencePlayer(player.getName());
+            return String.valueOf(resPlayer.getMaxX());
+        }
+        if (params.equalsIgnoreCase("residence_user_maxz")) {
+            ResidencePlayer resPlayer = ResidenceApi.getPlayerManager().getResidencePlayer(player.getName());
+            return String.valueOf(resPlayer.getMaxZ());
         }
         return "";
     }

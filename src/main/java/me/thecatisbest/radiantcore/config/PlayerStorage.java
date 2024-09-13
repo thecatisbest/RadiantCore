@@ -22,6 +22,7 @@ public class PlayerStorage {
     private static File file;
     private static FileConfiguration config;
     private static final HashMap<UUID, Boolean> flightMode = new HashMap<>();
+    private static final HashMap<UUID, Boolean> hasAcceptRules = new HashMap<>();
 
     public PlayerStorage(RadiantCore plugin) {
         this.plugin = plugin;
@@ -61,6 +62,15 @@ public class PlayerStorage {
 
     public int getFlyTime(UUID playerId) {
         return config.getInt(playerId.toString() + ".flightTime", 0);
+    }
+
+    public static void setAcceptRules(UUID playerId, Boolean hasAccept) {
+        PlayerStorage.hasAcceptRules.put(playerId, hasAccept);
+        config.set(playerId.toString() + ".acceptRules", hasAccept);
+    }
+
+    public static boolean getAcceptRules(UUID playerId) {
+        return config.getBoolean(playerId.toString() + ".acceptRules", false);
     }
 
     public static void setFlightMode(UUID playerId, boolean flightMode) {
@@ -106,6 +116,11 @@ public class PlayerStorage {
     public static void updatePlayerData(Player player) {
         UUID playerId = player.getUniqueId();
         setPlayerName(playerId, player.getName());
+        if (!getAcceptRules(playerId)) {
+            setAcceptRules(playerId, getAcceptRules(playerId));
+        } else {
+            PlayerStorage.hasAcceptRules.put(playerId, getAcceptRules(playerId));
+        }
         if (!getFlightMode(playerId)) {
             setFlightMode(playerId, getFlightMode(playerId));
         } else {

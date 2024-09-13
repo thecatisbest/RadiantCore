@@ -1,6 +1,6 @@
 package me.thecatisbest.radiantcore.listeners;
 
-import me.thecatisbest.radiantcore.utilis.Utilis;
+import me.thecatisbest.radiantcore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,9 +18,9 @@ public class SlimeballListener implements Listener {
             return;
         if (player.hasPermission("radiant.use.slimeball") && e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (player.getWorld().getChunkAt(player.getLocation()).isSlimeChunk()) {
-                player.sendMessage(Utilis.color("&a你現在站的地方是史萊姆區塊内"));
+                player.sendMessage(Utils.color("&a你現在站的地方是史萊姆區塊内"));
             } else {
-                player.sendMessage(Utilis.color("&c你現在站的地方不是史萊姆區塊内"));
+                player.sendMessage(Utils.color("&c你現在站的地方不是史萊姆區塊内"));
             }
         }
     }

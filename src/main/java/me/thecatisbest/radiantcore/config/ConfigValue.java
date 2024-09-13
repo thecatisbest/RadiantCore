@@ -7,6 +7,9 @@ public class ConfigValue {
 
     public static String COMMANDS = "say hi;say I'm %player%";
     public static Boolean SWAP = false;
+
+    public static Boolean SHIFT_RIGHT_INVIS_FRAMES = false;
+
     // Mushroom Soup
     public static String MUSHROOM_SOUP_WORLD_TYPE_MODE = "BLACKLIST";
     public static List<String> MUSHROOM_SOUP_WORLD_TYPE = Arrays.asList(

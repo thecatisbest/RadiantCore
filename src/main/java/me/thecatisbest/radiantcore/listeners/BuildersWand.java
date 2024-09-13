@@ -7,9 +7,9 @@ import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.commands.RadiantCommand;
 import me.thecatisbest.radiantcore.config.ConfigValue;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
-import me.thecatisbest.radiantcore.utilis.ItemUtils;
-import me.thecatisbest.radiantcore.utilis.Utilis;
-import me.thecatisbest.radiantcore.utilis.builder.ItemBuilder;
+import me.thecatisbest.radiantcore.utils.ItemUtils;
+import me.thecatisbest.radiantcore.utils.Utils;
+import me.thecatisbest.radiantcore.utils.builder.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -50,7 +50,7 @@ public class BuildersWand implements Listener {
                     (!currentItem.getType().isBlock() || currentItem.getType() == Material.PLAYER_HEAD)) {
                 if (!RadiantCommand.isWandUsingCMD.containsKey(player.getUniqueId())) {
                     event.setCancelled(true);
-                    event.getWhoClicked().sendMessage(Utilis.color("&c你只能將方塊放進儲存庫！"));
+                    event.getWhoClicked().sendMessage(Utils.color("&c你只能將方塊放進儲存庫！"));
                 }
             }
         }
@@ -237,7 +237,7 @@ public class BuildersWand implements Listener {
     // assumes that the first element of the list is the blockstate from before the wand usage
     public static void restoreWandOops(Player player) {
         if (!wandOops.containsKey(player)) {
-            player.sendMessage(Utilis.color("&c找不到上一次的撤銷記錄！"));
+            player.sendMessage(Utils.color("&c找不到上一次的撤銷記錄！"));
             return;
         }
 
@@ -250,7 +250,7 @@ public class BuildersWand implements Listener {
 
 
         wandOops.remove(player);
-        player.sendMessage(Utilis.color("&e已撤銷 &6" + (blocks.size() - 1) + " &e個方塊！"));
+        player.sendMessage(Utils.color("&e已撤銷 &6" + (blocks.size() - 1) + " &e個方塊！"));
 
         if (player.getGameMode() == GameMode.SURVIVAL) {
             ItemStack returnItem = new ItemStack(returnPoint.getType(), blocks.size() - 1);
@@ -261,7 +261,7 @@ public class BuildersWand implements Listener {
     // Inventory
     public static void openWandInventory(Player player) {
         Inventory inv = wandInventories.computeIfAbsent(player.getUniqueId(), k -> {
-            Inventory newInv = Bukkit.createInventory(null, 27, Utilis.color(inventoryName));
+            Inventory newInv = Bukkit.createInventory(null, 27, Utils.color(inventoryName));
             PlayerStorage.loadWandInventory(player.getUniqueId(), newInv);
             return newInv;
         });
@@ -318,7 +318,7 @@ public class BuildersWand implements Listener {
             return true;
         }
 
-        if (residence.getOwnerUUID().equals(player.getUniqueId()) || player.isOp() || player.hasPermission("radiant.res")) {
+        if (residence.getOwnerUUID().equals(player.getUniqueId()) || player.isOp()) {
             return true;
         }
 

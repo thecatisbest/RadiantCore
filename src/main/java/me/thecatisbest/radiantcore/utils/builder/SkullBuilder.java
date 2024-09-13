@@ -1,4 +1,4 @@
-package me.thecatisbest.radiantcore.utilis.builder;
+package me.thecatisbest.radiantcore.utils.builder;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
