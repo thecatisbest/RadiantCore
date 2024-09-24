@@ -4,7 +4,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.inventory.ItemStack;
@@ -221,14 +220,7 @@ public class SkullBuilder {
     private static void setToSkull(Block block) {
         checkLegacy();
 
-        try {
-            block.setType(Material.valueOf("PLAYER_HEAD"), false);
-        } catch (IllegalArgumentException e) {
-            block.setType(Material.valueOf("SKULL"), false);
-            Skull state = (Skull) block.getState();
-            state.setSkullType(SkullType.PLAYER);
-            state.update(false, false);
-        }
+        block.setType(Material.valueOf("PLAYER_HEAD"), false);
     }
 
     private static void notNull(Object o, String name) {
@@ -275,21 +267,33 @@ public class SkullBuilder {
     private static void mutateItemMeta(SkullMeta meta, String b64) {
         try {
             if (metaSetProfileMethod == null) {
+                // 尝试通过 setProfile 方法设置
                 metaSetProfileMethod = meta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
                 metaSetProfileMethod.setAccessible(true);
             }
             metaSetProfileMethod.invoke(meta, makeProfile(b64));
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-            // if in an older API where there is no setProfile method,
-            // we set the profile field directly.
+            // 如果 API 版本较老或没有 setProfile 方法，直接设置 profile 字段
             try {
                 if (metaProfileField == null) {
                     metaProfileField = meta.getClass().getDeclaredField("profile");
                     metaProfileField.setAccessible(true);
                 }
-                metaProfileField.set(meta, makeProfile(b64));
+                Object profileObject = makeProfile(b64);
 
-            } catch (NoSuchFieldException | IllegalAccessException ex2) {
+                // 检查字段类型是否为 ResolvableProfile
+                if (metaProfileField.getType().getSimpleName().equals("ResolvableProfile")) {
+                    // 使用 ResolvableProfile 包装 GameProfile
+                    Class<?> resolvableProfileClass = metaProfileField.getType();
+                    Object resolvableProfile = resolvableProfileClass
+                            .getConstructor(GameProfile.class)
+                            .newInstance(profileObject);
+                    metaProfileField.set(meta, resolvableProfile);
+                } else {
+                    // 兼容旧版本，直接设置 GameProfile
+                    metaProfileField.set(meta, profileObject);
+                }
+            } catch (NoSuchFieldException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException ex2) {
                 ex2.printStackTrace();
             }
         }

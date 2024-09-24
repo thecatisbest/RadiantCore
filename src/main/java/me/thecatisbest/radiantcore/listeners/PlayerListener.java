@@ -2,7 +2,6 @@ package me.thecatisbest.radiantcore.listeners;
 
 import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.config.ConfigValue;
-import me.thecatisbest.radiantcore.config.MainConfig;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
 import me.thecatisbest.radiantcore.menus.RulesGUI;
 import me.thecatisbest.radiantcore.utils.Utils;
@@ -13,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 

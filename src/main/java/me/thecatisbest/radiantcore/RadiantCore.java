@@ -6,7 +6,6 @@ import me.thecatisbest.radiantcore.commands.RadiantCommand;
 import me.thecatisbest.radiantcore.config.LoadConfigs;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
 import me.thecatisbest.radiantcore.listeners.*;
-import me.thecatisbest.radiantcore.menus.RulesGUI;
 import me.thecatisbest.radiantcore.utils.ItemUtils;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
