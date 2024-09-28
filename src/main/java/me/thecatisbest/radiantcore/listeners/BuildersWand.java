@@ -242,20 +242,43 @@ public class BuildersWand implements Listener {
         }
 
         List<BlockState> blocks = wandOops.get(player);
-        BlockState returnPoint = blocks.getFirst(); World world = blocks.getFirst().getWorld();
+        BlockState returnPoint = blocks.getFirst();
+        World world = blocks.getFirst().getWorld();
 
+        // 首先檢查所有方塊是否都未被修改
+        boolean allBlocksUnchanged = true;
         for (int counter = 1; counter < blocks.size(); counter++) {
-            world.getBlockAt(blocks.get(counter).getLocation()).setType(blocks.get(counter).getType());
+            Block currentBlock = world.getBlockAt(blocks.get(counter).getLocation());
+            if (currentBlock.getType() != returnPoint.getType() ||
+                    !currentBlock.getBlockData().matches(returnPoint.getBlockData())) {
+                allBlocksUnchanged = false;
+                break;
+            }
         }
 
+        if (allBlocksUnchanged) {
+            // 如果所有方塊都未被修改，執行恢復操作
+            int restoredCount = 0;
+            for (int counter = 1; counter < blocks.size(); counter++) {
+                BlockState originalState = blocks.get(counter);
+                Block currentBlock = world.getBlockAt(originalState.getLocation());
+                currentBlock.setType(originalState.getType());
+                currentBlock.setBlockData(originalState.getBlockData());
+                restoredCount++;
+            }
+
+            player.sendMessage(Utils.color("&e已成功恢復 &6" + restoredCount + " &e個方塊！"));
+
+            if (player.getGameMode() == GameMode.SURVIVAL && restoredCount > 0) {
+                ItemStack returnItem = new ItemStack(returnPoint.getType(), restoredCount);
+                getWandInventory(player).addItem(returnItem);
+            }
+        } else {
+            // 如果有任何方塊被修改，取消整個恢復操作
+            player.sendMessage(Utils.color("&c無法恢復方塊，因為有部分方塊已被更改。"));
+        }
 
         wandOops.remove(player);
-        player.sendMessage(Utils.color("&e已撤銷 &6" + (blocks.size() - 1) + " &e個方塊！"));
-
-        if (player.getGameMode() == GameMode.SURVIVAL) {
-            ItemStack returnItem = new ItemStack(returnPoint.getType(), blocks.size() - 1);
-            getWandInventory(player).addItem(returnItem);
-        }
     }
 
     // Inventory
