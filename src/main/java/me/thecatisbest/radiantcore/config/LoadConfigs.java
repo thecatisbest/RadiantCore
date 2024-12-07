@@ -1,6 +1,6 @@
 package me.thecatisbest.radiantcore.config;
 
-import me.thecatisbest.radiantcore.RadiantCore;
+import me.thecatisbest.radiantcore.utils.Log;
 
 public class LoadConfigs {
 
@@ -11,6 +11,6 @@ public class LoadConfigs {
         ItemsConfig.load();
 
         final long end = System.currentTimeMillis();
-        RadiantCore.getInstance().getLogger().info("Configs loaded in " + (end - start) + "ms.");
+        Log.info("Configs loaded in " + (end - start) + "ms.");
     }
 }

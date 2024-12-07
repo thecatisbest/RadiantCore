@@ -6,6 +6,7 @@ import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.containers.ResidencePlayer;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import me.thecatisbest.radiantcore.config.ConfigValue;
+import me.thecatisbest.radiantcore.hooks.ResidenceUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -26,7 +27,7 @@ public class InvisibleItemFrame implements Listener {
         Player player = event.getPlayer();
         if (!player.isSneaking()) return;
 
-        if (!resCheck(player, event.getRightClicked().getLocation())) return;
+        if (!ResidenceUtil.resCheck(player, event.getRightClicked().getLocation())) return;
 
         if (!ConfigValue.SHIFT_RIGHT_INVIS_FRAMES.equals(true)) return;
 
@@ -38,23 +39,5 @@ public class InvisibleItemFrame implements Listener {
         event.setCancelled(true);
         itemFrame.setVisible(!itemFrame.isVisible());
         itemFrame.setFixed(!itemFrame.isFixed());
-    }
-
-    public boolean resCheck(Player player, Location location) {
-        ClaimedResidence residence = ResidenceApi.getResidenceManager().getByLoc(location);
-
-        if (residence == null) {
-            return true;
-        }
-
-        if (residence.getOwnerUUID().equals(player.getUniqueId()) || player.isOp()) {
-            return true;
-        }
-
-        if (!residence.getPermissions().playerHas(player, Flags.valueOf("place") , true)) {
-            return false;
-        }
-
-        return true;
     }
 }

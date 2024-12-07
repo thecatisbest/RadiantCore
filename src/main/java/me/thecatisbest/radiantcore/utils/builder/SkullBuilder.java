@@ -2,6 +2,7 @@ package me.thecatisbest.radiantcore.utils.builder;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import me.thecatisbest.radiantcore.utils.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,8 +18,16 @@ import java.net.URISyntaxException;
 import java.util.Base64;
 import java.util.UUID;
 
-public class SkullBuilder {
+/**
+ * A library for the Bukkit API to create player skulls
+ * from names, base64 strings, and texture URLs.
+ * <p>
+ * Does not use any NMS code, and should work across all versions.
+ *
+ * @author deanveloper on 12/28/2016.
+ */
 
+public class SkullBuilder {
     private SkullBuilder() {}
 
     private static boolean warningPosted = false;
@@ -310,7 +319,7 @@ public class SkullBuilder {
             Material.valueOf("SKULL");
 
             if (!warningPosted) {
-                Bukkit.getLogger().warning("SKULLCREATOR API - Using the legacy bukkit API with 1.13+ bukkit versions is not supported!");
+                Log.warning("SKULLCREATOR API - Using the legacy bukkit API with 1.13+ bukkit versions is not supported!");
                 warningPosted = true;
             }
         } catch (NoSuchFieldException | IllegalArgumentException ignored) {}

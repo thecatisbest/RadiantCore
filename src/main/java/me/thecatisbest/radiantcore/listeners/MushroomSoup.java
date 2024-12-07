@@ -6,6 +6,7 @@ import com.cryptomorin.xseries.XSound;
 import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.config.ConfigValue;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
+import me.thecatisbest.radiantcore.hooks.CMIUtil;
 import me.thecatisbest.radiantcore.utils.ItemUtils;
 import me.thecatisbest.radiantcore.utils.Utils;
 import me.thecatisbest.radiantcore.utils.builder.ItemBuilder;
@@ -149,6 +150,8 @@ public class MushroomSoup implements Listener {
     public void onPlayerAFK(CMIAfkEnterEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
+        boolean isCMILoaded = CMIUtil.initCMI();
+        if (!isCMILoaded) return;
         if (tasks.containsKey(playerId)) {
             Bukkit.getScheduler().cancelTask(tasks.get(playerId));
             tasks.remove(playerId);
@@ -160,6 +163,9 @@ public class MushroomSoup implements Listener {
     public void onPlayerLeaveAFK(CMIAfkLeaveEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
+
+        boolean isCMILoaded = CMIUtil.initCMI();
+        if (!isCMILoaded) return;
 
         int savedTime = RadiantCore.getInstance().getPlayerStorage().getFlyTime(playerId); // 从文件中加载
         if (savedTime > 0) {

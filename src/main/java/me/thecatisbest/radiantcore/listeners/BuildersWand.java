@@ -1,12 +1,11 @@
 package me.thecatisbest.radiantcore.listeners;
 
-import com.bekvon.bukkit.residence.api.ResidenceApi;
-import com.bekvon.bukkit.residence.containers.Flags;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import me.thecatisbest.radiantcore.RadiantCore;
 import me.thecatisbest.radiantcore.commands.RadiantCommand;
 import me.thecatisbest.radiantcore.config.ConfigValue;
 import me.thecatisbest.radiantcore.config.PlayerStorage;
+import me.thecatisbest.radiantcore.hooks.CoreProtectUtil;
+import me.thecatisbest.radiantcore.hooks.ResidenceUtil;
 import me.thecatisbest.radiantcore.utils.ItemUtils;
 import me.thecatisbest.radiantcore.utils.Utils;
 import me.thecatisbest.radiantcore.utils.builder.ItemBuilder;
@@ -76,7 +75,7 @@ public class BuildersWand implements Listener {
                 if (currentTime - lastUsed < 500)
                     return;
 
-                if (!resCheck(player, event.getClickedBlock().getLocation())) {
+                if (!ResidenceUtil.resCheck(player, event.getClickedBlock().getLocation())) {
                     event.setCancelled(true);
                     return;
                 }
@@ -162,7 +161,7 @@ public class BuildersWand implements Listener {
             Block fillBlock = w.getBlockAt(l.clone().add(translate));
 
             // 检查目标方块是否位于领地内，如果在领地内则跳过
-            if (!resCheck(player, fillBlock.getLocation())) {
+            if (!ResidenceUtil.resCheck(player, fillBlock.getLocation())) {
                 blocks.removeIf(blocks.getFirst()::equals);
                 continue;
             }
@@ -198,7 +197,7 @@ public class BuildersWand implements Listener {
             for (BlockState blockState : blockStates) {
                 Block block = blockState.getBlock();
                 BlockData blockData = block.getBlockData();
-                RadiantCore.getInstance().getCoreProtectAPI().logPlacement(
+                CoreProtectUtil.logBlockPlace(
                         player.getName(),
                         block.getLocation(),
                         block.getType(),
@@ -333,22 +332,5 @@ public class BuildersWand implements Listener {
             default:
                 return true;
         }
-    }
-    public boolean resCheck(Player player, Location location) {
-        ClaimedResidence residence = ResidenceApi.getResidenceManager().getByLoc(location);
-
-        if (residence == null) {
-            return true;
-        }
-
-        if (residence.getOwnerUUID().equals(player.getUniqueId()) || player.isOp()) {
-            return true;
-        }
-
-        if (!residence.getPermissions().playerHas(player, Flags.valueOf("build") , true)) {
-            return false;
-        }
-
-        return true;
     }
 }
