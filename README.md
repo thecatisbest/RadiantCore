@@ -1,3 +1,4 @@
+# RadiantCore
 「暉長 RADIANT」 生存分流核心
 ## 包含
 - 完善的配置系統
