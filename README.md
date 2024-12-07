@@ -26,5 +26,5 @@
 - `radiant.command.openwandinv` 打開任何玩家的魔杖儲存庫
 - `radiant.command.toggleflight.setplayer` 設置特定玩家的飛行狀態
 ## 佔位符
-- %radiant_flight_time% 顯示當前剩餘的飛行時間 (秒)
-- %radiant_flight_status% 顯示飛行狀態
+- `%radiant_flight_time%` 顯示當前剩餘的飛行時間 (秒)
+- `%radiant_flight_status%` 顯示飛行狀態
